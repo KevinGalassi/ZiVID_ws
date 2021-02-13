@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="limited"    default="true"/>
+    <arg name="paused"     default="true"/>
+    <arg name="gui"        default="true"/>
+    <arg name="scene_file" default="$(find zivid_description)/models/scene/table.scene"/> 
+  
+    <arg name="right_ns"   default="right_arm"/>
+    <arg name="right_y"    default="0.470"/>    
+    <arg name="right_z"    default="0.01"/>
+    <arg name="right_Y"    default="3.14"/>  
+    <arg name="right_tool" default="'true'"/>
+
+    <arg name="left_ns"    default="left_arm"/>
+    <arg name="left_y"     default="-0.470"/>
+    <arg name="left_z"     default="0.001"/>     
+    <arg name="left_Y"     default="0.0"/>  
+    <arg name="left_tool"  default="true"/>
+
+    
+
+
+    <node name="supervisor_sys"     pkg="zivid_task" type="supervisor.py"      args="right_arm/" output="screen" />
+    <node name="ArmActionServer"    pkg="zivid_task" type="arm_action_server.py"   args="right_arm/"  launch-prefix="xterm -e" required="true"/>
+
+
+</launch>

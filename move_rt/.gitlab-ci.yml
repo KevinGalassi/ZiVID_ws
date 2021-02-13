@@ -1,0 +1,85 @@
+image: ros:melodic-robot
+
+cache:
+  paths:
+    - ccache/
+
+before_script:
+  - apt update >/dev/null && apt install -y git >/dev/null
+  - git clone https://gitlab.com/VictorLamoine/ros_gitlab_ci.git >/dev/null
+  - source ros_gitlab_ci/gitlab-ci.bash >/dev/null
+
+melodic catkin_make:
+  stage: build
+  image: ros:melodic-robot
+  script:
+    - catkin_make
+    
+    
+melodic catkin build:
+  stage: build
+  image: ros:melodic-robot
+  script:
+    - catkin build --summarize --no-status --force-color
+  artifacts:
+    paths:
+      - 'catkin_workspace/build'
+      - 'catkin_workspace/devel'
+    expire_in: 4 hrs
+    
+melodic catkin_make tests:
+  stage: test
+  image: ros:melodic-robot
+  script:
+    - catkin_make run_tests
+    - catkin_test_results # Check if one of the tests failed!
+  dependencies: [] # Do not download artifacts (they were created with catkin tools)
+
+melodic catkin run_tests:
+  stage: test
+  image: ros:melodic-robot  
+  script:
+    - source devel/setup.bash
+    - catkin run_tests --no-status --force-color | sed -En '/^-- run_tests.py/,/^-- run_tests.py/p'
+    - catkin_test_results # Check if one of the tests failed!
+  needs:
+    - job: melodic catkin build
+      artifacts: true
+
+kinetic catkin_make:
+  stage: build
+  image: ros:kinetic-robot
+  script:
+    - catkin_make
+    
+    
+kinetic catkin build:
+  stage: build
+  image: ros:kinetic-robot
+  script:
+    - catkin build --summarize --no-status --force-color
+  artifacts:
+    paths:
+      - 'catkin_workspace/build'
+      - 'catkin_workspace/devel'
+    expire_in: 4 hrs
+    
+kinetic catkin_make tests:
+  stage: test
+  image: ros:kinetic-robot
+  script:
+    - catkin_make run_tests
+    - catkin_test_results # Check if one of the tests failed!
+  dependencies: [] # Do not download artifacts (they were created with catkin tools)
+
+kinetic catkin run_tests:
+  stage: test
+  image: ros:kinetic-robot
+  script:
+    - source devel/setup.bash
+    - catkin run_tests --no-status --force-color | sed -En '/^-- run_tests.py/,/^-- run_tests.py/p'
+    - catkin_test_results # Check if one of the tests failed!
+  needs:
+    - job: kinetic catkin build
+      artifacts: true
+    

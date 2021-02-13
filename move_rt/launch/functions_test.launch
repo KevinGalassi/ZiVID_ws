@@ -1,0 +1,4 @@
+<launch>
+<node pkg="move_rt" type="functions_test" name="functions_test" />
+<test pkg="move_rt" type="functions_test" test-name="functions_test" />
+</launch>

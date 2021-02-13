@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<launch>
+   <arg name="limited"                     default = "false" />
+   <arg name="transmission_hw_interface"   default = "hardware_interface/PositionJointInterface" />
+   <arg name="kinematics_config"           default = "$(find ur_e_description)/config/ur5e_default.yaml"/>
+   <arg name="left_ns"                     default = "left_arm/" />
+
+   <arg name="x" default = "0.0" />  
+   <arg name="y" default = "0.0" />
+   <arg name="z" default = "0.0" />
+   <arg name="X" default = "0.0" />
+   <arg name="Y" default = "0.0" />
+   <arg name="Z" default = "0.0" />
+
+
+   <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro --inorder '$(find zivid_description)/xacro/ur5e_robot.urdf.xacro'
+      transmission_hw_interface:=$(arg transmission_hw_interface)
+      kinematics_config:=$(arg kinematics_config)
+      x:=$(arg x)
+      y:=$(arg y) 
+      z:=$(arg z)
+      X:=$(arg X)
+      Y:=$(arg Y) 
+      Z:=$(arg Z) 
+   />
+
+
+   <param if="$(arg limited)" name="robot_description"
+      command="$(find xacro)/xacro --inorder '$(find ur_e_description)/urdf/ur5e_joint_limited_robot.urdf.xacro'
+      transmission_hw_interface:=$(arg transmission_hw_interface)
+      kinematics_config:=$(arg kinematics_config)"
+   />
+</launch>
+
+

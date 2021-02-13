@@ -1,0 +1,24 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/kevin/ros/ZiVID_ws/devel/include/**",
+        "/opt/ros/melodic/include/**",
+        "/home/kevin/ros/ZiVID_ws/src/ur5/Universal_Robots_ROS_Driver/controller_stopper/include/**",
+        "/home/kevin/ros/ZiVID_ws/src/move_rt/include/**",
+        "/home/kevin/ros/ZiVID_ws/src/ZIVID/uc1_p2p/include/**",
+        "/home/kevin/ros/ZiVID_ws/src/ur5/Universal_Robots_ROS_Driver/ur_calibration/include/**",
+        "/home/kevin/ros/ZiVID_ws/src/ur5/Universal_Robots_ROS_Driver/ur_controllers/include/**",
+        "/home/kevin/ros/ZiVID_ws/src/ur5/universal_robot/ur_kinematics/include/**",
+        "/home/kevin/ros/ZiVID_ws/src/ur5/Universal_Robots_ROS_Driver/ur_robot_driver/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}

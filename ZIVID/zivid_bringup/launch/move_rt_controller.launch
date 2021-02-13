@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<launch>
+   <arg name="limited" default="true"/>
+   <arg name="paused" default="true"/>
+   <arg name="gui" default="true"/>
+   <arg name="scene_file" default="$(find zivid_description)/scene/table.scene"/> 
+
+   <arg name="right_ns" default="right_arm"/>
+   <arg name="right_y" default="0.470"/>    
+   <arg name="right_z" default="0.01"/>
+   <arg name="right_Z" default="3.14"/>  
+   <arg name="right_tool" default="'true'"/>
+    
+   <arg name="left_ns" default="left_arm"/>
+   <arg name="left_y" default="-0.470"/>
+   <arg name="left_z" default="0.001"/>     
+   <arg name="left_Z" default="0.0"/>  
+   <arg name="left_tool" default="true"/>
+    
+   <arg name="left_active" value="true"/>
+   <arg name="right_active" value="true"/>
+
+
+
+   <group if="$(arg left_active)" >
+	   <group ns="$(arg left_ns)">        
+	      <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find zivid_description)/xacro/ur5e_robot.urdf.xacro' ns:=$(arg left_ns) y:=$(arg left_y) z:=$(arg left_z) Z:=$(arg left_Z)" />
+		   <rosparam file="$(find zivid_bringup)/config/left_arm.yaml" command="load"/>
+		   <node pkg="move_rt" type="move_rt_node" name="move_rt" launch-prefix="xterm -e gdb -ex=run --args"/>
+	   </group>    
+   </group>
+
+   <group if="$(arg right_active)">
+	   <group ns="$(arg right_ns)">        
+		   <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find zivid_description)/xacro/ur5_robot.urdf.xacro' ns:=$(arg right_ns) y:=$(arg right_y) z:=$(arg right_z) Z:=$(arg right_Z) " />
+         <rosparam file="$(find zivid_bringup)/config/right_arm.yaml" command="load"/>
+		   <node pkg="move_rt" type="move_rt_node" name="move_rt" launch-prefix="xterm -e gdb -ex=run --args"/>
+	   </group>
+   </group>
+
+</launch>

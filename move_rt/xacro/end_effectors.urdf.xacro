@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!-- xacro for extras components mounted on the manipulator -->
+
+<robot name="end_effectors" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="screwdriver" params="prefix">
+  
+    <link name="screwdriver">
+      <visual>
+        <geometry>
+          <mesh filename="package://uc1_simulation/models/end_effectors/screwdriver.stl"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <material name="white">
+          <color rgba="${150/255} ${150/255} ${150/255} 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://uc1_simulation/models/end_effectors/screwdriver_simple.stl"/>
+        </geometry>
+        <origin xyz=" 0 0 0.0" rpy="0 0 0"/>
+      </collision>
+      <!--xacro:default_inertial mass="20"/-->
+    </link>
+    
+     
+<!-- Transform link from arm to screwdriver -->
+    <joint name="screwdriver_joint" type="fixed">
+      <origin rpy="0 -1.567 0" xyz="0 0 0"/>
+      <parent link="${prefix}ee_link"/>
+      <child link="screwdriver"/>
+    </joint>
+
+
+    <link name="screwdriver_tip"/>
+
+    <!-- Transform link from arm to screwdriver tip -->
+    <joint name="screwdriver_tip_joint" type="fixed">
+      <origin rpy="0 3.1412 0" xyz="0.066 0 -0.3267"/>
+      <parent link="screwdriver"/>
+      <child link="screwdriver_tip"/>
+    </joint>
+    </xacro:macro>
+
+    <xacro:macro name="gripper" params="prefix">
+  
+    <link name="gripper">
+      <visual>
+        <geometry>
+          <mesh filename="package://uc1_simulation/models/end_effectors/UR5-MEG40.stl"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <material name="white">
+          <color rgba="${150/255} ${150/255} ${150/255} 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://uc1_simulation/models/end_effectors/UR5-MEG40_simplified.stl"/>
+        </geometry>
+        <origin xyz=" 0 0 0.0" rpy="0 0 0"/>
+      </collision>
+      <!--xacro:default_inertial mass="20"/-->
+    </link>
+    
+     
+<!-- Transform link from arm to screwdriver -->
+    <joint name="gripper_joint" type="fixed">
+      <origin rpy="0 0 3.1412" xyz="0 0 0"/>
+      <parent link="${prefix}ee_link"/>
+      <child link="gripper"/>
+    </joint>
+
+
+    <link name="fingers"/>
+
+    <!-- Transform link from arm to screwdriver tip -->
+    <joint name="fingers_joint" type="fixed">
+      <origin rpy="-1.567 0 0" xyz="-0.20219 0.11505 0 "/>
+      <parent link="gripper"/>
+      <child link="fingers"/>
+    </joint>
+    </xacro:macro>
+</robot>

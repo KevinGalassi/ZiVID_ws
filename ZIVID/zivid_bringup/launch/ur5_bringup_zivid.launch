@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<launch>
+   <arg name="debug"                    default="false"/>
+   <arg name="robot_ip"                 default="192.168.0.102"/>
+   <arg name="reverse_port"             default="50003"/>
+   <arg name="script_sender_port"       default="50004"/>
+   <arg name="tf_prefix"                default="right_arm"/>
+   <arg name="controllers"              default="joint_state_controller joint_group_vel_controller force_torque_sensor_controller"/>
+   <arg name="stopped_controllers"      default="pos_joint_traj_controller"/>
+   <arg name="controller_config_file"   default="$(find ur_robot_driver)/config/ur5_controllers.yaml"/>
+   <arg name="robot_description_file"   default="$(find zivid_description)/launch/ur5_upload_zivid.launch"/>
+   <arg name="kinematics_config"        default="$(find zivid_description)/robot_calibration/robot_calibration_ur5.yaml"/>
+   <arg name="use_tool_communication"   default="false"/>
+   <arg name="limited"                  default="false"/>
+   <arg name="headless_mode"            default="false"/>
+
+   <arg name="right_ns"       default="right_arm"/>
+   <arg name="ns"             default=""/>      
+   <arg name="x"              default="0.0"/>
+   <arg name="y"              default="0.47"/>
+   <arg name="z"              default="0.0"/>
+   <arg name="X"              default="0.0"/>
+   <arg name="Y"              default="0.0"/>
+   <arg name="Z"              default="3.14"/>
+
+   <arg name="gripper"           default="true"/>
+   <arg name="gripper_no_cam"    default="false"/>
+   <arg name="screwdriver"       default="false"/>
+
+   <group ns="$(arg right_ns)">
+      <include file="$(find zivid_bringup)/launch/ur_common_zivid.launch" pass_all_args="true" >
+         <arg name="use_tool_communication" value="$(arg use_tool_communication)"/>
+      </include>
+   </group>
+
+</launch>

@@ -1,0 +1,12 @@
+<launch>
+ 
+
+
+  <include ns="move_group" file="$(find ur5_e_moveit_config)/launch/move_group.launch" >
+	<remap from="robot_description" to="left_arm/robot_description"/>
+
+  </include>
+
+
+
+</launch>

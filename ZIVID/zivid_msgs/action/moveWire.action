@@ -1,0 +1,8 @@
+geometry_msgs/Pose target_pose
+geometry_msgs/Point displacement
+float32 release_height
+string requested_action # Moving | Homing
+---
+bool success
+---
+float64 current_time

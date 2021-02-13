@@ -1,0 +1,1290 @@
+Panels:
+  - Class: rviz/Displays
+    Help Height: 84
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /RightArmMotionPlanning1
+        - /LeftArmMotionPlanning1
+        - /TF1
+        - /TF1/Frames1
+        - /Gearbox1
+      Splitter Ratio: 0.7425600290298462
+    Tree Height: 790
+  - Class: rviz/Help
+    Name: Help
+  - Class: rviz/Views
+    Expanded:
+      - /Current View1
+    Name: Views
+    Splitter Ratio: 0.5
+Preferences:
+  PromptSaveOnExit: true
+Toolbars:
+  toolButtonStyle: 2
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 0.5
+      Cell Size: 1
+      Class: rviz/Grid
+      Color: 160; 160; 164
+      Enabled: true
+      Line Style:
+        Line Width: 0.029999999329447746
+        Value: Lines
+      Name: Grid
+      Normal Cell Count: 0
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Plane: XY
+      Plane Cell Count: 10
+      Reference Frame: <Fixed Frame>
+      Value: true
+    - Acceleration_Scaling_Factor: 1
+      Class: moveit_rviz_plugin/MotionPlanning
+      Enabled: true
+      Move Group Namespace: ""
+      MoveIt_Allow_Approximate_IK: false
+      MoveIt_Allow_External_Program: false
+      MoveIt_Allow_Replanning: false
+      MoveIt_Allow_Sensor_Positioning: false
+      MoveIt_Goal_Tolerance: 0
+      MoveIt_Planning_Attempts: 10
+      MoveIt_Planning_Time: 5
+      MoveIt_Use_Cartesian_Path: false
+      MoveIt_Use_Constraint_Aware_IK: true
+      MoveIt_Warehouse_Host: 127.0.0.1
+      MoveIt_Warehouse_Port: 33829
+      MoveIt_Workspace:
+        Center:
+          X: 0
+          Y: 0
+          Z: 0
+        Size:
+          X: 2
+          Y: 2
+          Z: 2
+      Name: RightArmMotionPlanning
+      Planned Path:
+        Color Enabled: false
+        Interrupt Display: false
+        Links:
+          All Links Enabled: true
+          Expand Joint Details: false
+          Expand Link Details: false
+          Expand Tree: false
+          Link Tree Style: Links in Alphabetic Order
+          asus_xtion_depth_frame:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          asus_xtion_depth_optical_frame:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          asus_xtion_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          asus_xtion_rgb_frame:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          asus_xtion_rgb_optical_frame:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          base_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          ee_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          fingers:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          forearm_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          gripper:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          shoulder_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          tool0:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          upper_arm_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          wrist_1_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          wrist_2_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          wrist_3_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+        Loop Animation: false
+        Robot Alpha: 0.5
+        Robot Color: 150; 50; 150
+        Show Robot Collision: false
+        Show Robot Visual: true
+        Show Trail: false
+        State Display Time: 0.05 s
+        Trail Step Size: 1
+        Trajectory Topic: /move_group/display_planned_path
+      Planning Metrics:
+        Payload: 1
+        Show Joint Torques: false
+        Show Manipulability: false
+        Show Manipulability Index: false
+        Show Weight Limit: false
+        TextHeight: 0.07999999821186066
+      Planning Request:
+        Colliding Link Color: 255; 0; 0
+        Goal State Alpha: 1
+        Goal State Color: 250; 128; 0
+        Interactive Marker Size: 0
+        Joint Violation Color: 255; 0; 255
+        Planning Group: endeffector
+        Query Goal State: true
+        Query Start State: false
+        Show Workspace: false
+        Start State Alpha: 1
+        Start State Color: 0; 255; 0
+      Planning Scene Topic: /right_arm/move_group/monitored_planning_scene
+      Robot Description: right_arm/robot_description
+      Scene Geometry:
+        Scene Alpha: 0.8999999761581421
+        Scene Color: 50; 230; 50
+        Scene Display Time: 0.009999999776482582
+        Show Scene Geometry: true
+        Voxel Coloring: Z-Axis
+        Voxel Rendering: Occupied Voxels
+      Scene Robot:
+        Attached Body Color: 150; 50; 150
+        Links:
+          All Links Enabled: true
+          Expand Joint Details: false
+          Expand Link Details: false
+          Expand Tree: false
+          Link Tree Style: Links in Alphabetic Order
+          asus_xtion_depth_frame:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          asus_xtion_depth_optical_frame:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          asus_xtion_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          asus_xtion_rgb_frame:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          asus_xtion_rgb_optical_frame:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          base_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          ee_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          fingers:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          forearm_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          gripper:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          shoulder_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          tool0:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          upper_arm_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          wrist_1_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          wrist_2_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          wrist_3_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+        Robot Alpha: 1
+        Show Robot Collision: false
+        Show Robot Visual: true
+      Value: true
+      Velocity_Scaling_Factor: 1
+    - Acceleration_Scaling_Factor: 1
+      Class: moveit_rviz_plugin/MotionPlanning
+      Enabled: true
+      Move Group Namespace: ""
+      MoveIt_Allow_Approximate_IK: false
+      MoveIt_Allow_External_Program: false
+      MoveIt_Allow_Replanning: false
+      MoveIt_Allow_Sensor_Positioning: false
+      MoveIt_Goal_Tolerance: 0
+      MoveIt_Planning_Attempts: 10
+      MoveIt_Planning_Time: 5
+      MoveIt_Use_Cartesian_Path: false
+      MoveIt_Use_Constraint_Aware_IK: true
+      MoveIt_Warehouse_Host: 127.0.0.1
+      MoveIt_Warehouse_Port: 33829
+      MoveIt_Workspace:
+        Center:
+          X: 0
+          Y: 0
+          Z: 0
+        Size:
+          X: 2
+          Y: 2
+          Z: 2
+      Name: LeftArmMotionPlanning
+      Planned Path:
+        Color Enabled: false
+        Interrupt Display: false
+        Links:
+          All Links Enabled: true
+          Expand Joint Details: false
+          Expand Link Details: false
+          Expand Tree: false
+          Link Tree Style: Links in Alphabetic Order
+          base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          base_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          ee_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          forearm_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          screwdriver:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          screwdriver_tip:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          shoulder_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          tool0:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          upper_arm_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          wrist_1_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          wrist_2_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          wrist_3_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+        Loop Animation: false
+        Robot Alpha: 0.5
+        Robot Color: 150; 50; 150
+        Show Robot Collision: false
+        Show Robot Visual: true
+        Show Trail: false
+        State Display Time: 0.05 s
+        Trail Step Size: 1
+        Trajectory Topic: move_group/display_planned_path
+      Planning Metrics:
+        Payload: 1
+        Show Joint Torques: false
+        Show Manipulability: false
+        Show Manipulability Index: false
+        Show Weight Limit: false
+        TextHeight: 0.07999999821186066
+      Planning Request:
+        Colliding Link Color: 255; 0; 0
+        Goal State Alpha: 1
+        Goal State Color: 250; 128; 0
+        Interactive Marker Size: 0.25
+        Joint Violation Color: 255; 0; 255
+        Planning Group: endeffector
+        Query Goal State: true
+        Query Start State: false
+        Show Workspace: false
+        Start State Alpha: 1
+        Start State Color: 0; 255; 0
+      Planning Scene Topic: /left_arm/move_group/monitored_planning_scene
+      Robot Description: left_arm/robot_description
+      Scene Geometry:
+        Scene Alpha: 1
+        Scene Color: 50; 230; 50
+        Scene Display Time: 0.20000000298023224
+        Show Scene Geometry: true
+        Voxel Coloring: Z-Axis
+        Voxel Rendering: Occupied Voxels
+      Scene Robot:
+        Attached Body Color: 150; 50; 150
+        Links:
+          All Links Enabled: true
+          Expand Joint Details: false
+          Expand Link Details: false
+          Expand Tree: false
+          Link Tree Style: Links in Alphabetic Order
+          base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          base_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          ee_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          forearm_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          screwdriver:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          screwdriver_tip:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          shoulder_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          tool0:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          upper_arm_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          wrist_1_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          wrist_2_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          wrist_3_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+        Robot Alpha: 0.5
+        Show Robot Collision: false
+        Show Robot Visual: true
+      Value: true
+      Velocity_Scaling_Factor: 1
+    - Class: rviz/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        13_corrected_hole:
+          Value: true
+        13_corrected_screw:
+          Value: true
+        14_corrected_hole:
+          Value: true
+        14_corrected_screw:
+          Value: true
+        1_corrected_hole:
+          Value: true
+        1_corrected_screw:
+          Value: true
+        21_corrected_hole:
+          Value: true
+        21_corrected_screw:
+          Value: true
+        22_corrected_hole:
+          Value: true
+        22_corrected_screw:
+          Value: true
+        2_corrected_hole:
+          Value: true
+        2_corrected_screw:
+          Value: true
+        3_corrected_hole:
+          Value: true
+        3_corrected_screw:
+          Value: true
+        4_corrected_hole:
+          Value: true
+        4_corrected_screw:
+          Value: true
+        5_corrected_hole:
+          Value: true
+        5_corrected_screw:
+          Value: true
+        6_corrected_hole:
+          Value: true
+        6_corrected_screw:
+          Value: true
+        All Enabled: false
+        ID000001:
+          Value: false
+        ID000038:
+          Value: false
+        ID000039:
+          Value: false
+        ID000039_corner:
+          Value: false
+        ID000040:
+          Value: false
+        ID000040_corner:
+          Value: false
+        ID000041:
+          Value: false
+        ID000041_corner:
+          Value: false
+        ID000042:
+          Value: false
+        ID000042_corner:
+          Value: false
+        ID000043:
+          Value: false
+        ID000043_corner:
+          Value: false
+        ID000044:
+          Value: false
+        ID000044_corner:
+          Value: false
+        ID000045:
+          Value: false
+        ID000045_corner:
+          Value: false
+        ID000046:
+          Value: false
+        ID000046_corner:
+          Value: false
+        ID000047:
+          Value: false
+        ID000047_corner:
+          Value: false
+        ID000048:
+          Value: false
+        ID000048_corner:
+          Value: false
+        ID000049:
+          Value: false
+        ID000049_corner:
+          Value: false
+        ID000050:
+          Value: false
+        ID000050_corner:
+          Value: false
+        ID000051:
+          Value: false
+        ID000051_corner:
+          Value: false
+        ID000052:
+          Value: false
+        ID000052_corner:
+          Value: false
+        ID000053:
+          Value: false
+        ID000053_corner:
+          Value: false
+        ID000054:
+          Value: false
+        ID000054_corner:
+          Value: false
+        ID000055:
+          Value: false
+        ID000055_corner:
+          Value: false
+        ID000056:
+          Value: false
+        ID000056_corner:
+          Value: false
+        ID000057:
+          Value: false
+        ID000057_corner:
+          Value: false
+        ID000058:
+          Value: false
+        ID000058_corner:
+          Value: false
+        ID000059:
+          Value: false
+        ID000059_corner:
+          Value: false
+        ID000060:
+          Value: false
+        ID000060_corner:
+          Value: false
+        ID000061:
+          Value: false
+        ID000061_corner:
+          Value: false
+        ID000062:
+          Value: false
+        ID000062_corner:
+          Value: false
+        ID000063:
+          Value: false
+        ID000064:
+          Value: false
+        ID000064_corner:
+          Value: false
+        ID000065:
+          Value: false
+        ID000065_corner:
+          Value: false
+        ID000066:
+          Value: false
+        ID000066_corner:
+          Value: false
+        ID000067:
+          Value: false
+        ID000067_corner:
+          Value: false
+        ID000068:
+          Value: false
+        ID000068_corner:
+          Value: false
+        ID000069:
+          Value: false
+        ID000069_corner:
+          Value: false
+        ID000070:
+          Value: false
+        ID000071:
+          Value: false
+        ID000071_corner:
+          Value: false
+        ID000072:
+          Value: false
+        ID000072_corner:
+          Value: false
+        ID000073:
+          Value: false
+        ID000073_corner:
+          Value: false
+        ID000074:
+          Value: false
+        ID000074_corner:
+          Value: false
+        ID000075:
+          Value: false
+        ID000075_corner:
+          Value: false
+        ID000076:
+          Value: false
+        ID000076_corner:
+          Value: false
+        ID000077:
+          Value: false
+        ID000077_corner:
+          Value: false
+        ID000078:
+          Value: false
+        ID000078_corner:
+          Value: false
+        ID000079:
+          Value: false
+        ID000079_corner:
+          Value: false
+        ID000080:
+          Value: false
+        ID000080_corner:
+          Value: false
+        ID000081:
+          Value: false
+        ID000081_corner:
+          Value: false
+        ID000082:
+          Value: false
+        ID000082_corner:
+          Value: false
+        ID000083:
+          Value: false
+        ID000083_corner:
+          Value: false
+        ID000084:
+          Value: false
+        ID000084_corner:
+          Value: false
+        ID000085:
+          Value: false
+        ID000085_corner:
+          Value: false
+        ID000086:
+          Value: false
+        ID000086_corner:
+          Value: false
+        ID000087:
+          Value: false
+        ID000087_corner:
+          Value: false
+        ID000088:
+          Value: false
+        ID000088_corner:
+          Value: false
+        ID000089:
+          Value: false
+        ID000089_corner:
+          Value: false
+        ID000090:
+          Value: false
+        ID000090_corner:
+          Value: false
+        ID000091:
+          Value: false
+        ID000091_corner:
+          Value: false
+        ID000092:
+          Value: false
+        ID000092_corner:
+          Value: false
+        ID000093:
+          Value: false
+        ID000093_corner:
+          Value: false
+        ID000094:
+          Value: false
+        ID000094_corner:
+          Value: false
+        ID000095:
+          Value: false
+        ID000095_corner:
+          Value: false
+        ID000096:
+          Value: false
+        ID000096_corner:
+          Value: false
+        ID000097:
+          Value: false
+        ID000097_corner:
+          Value: false
+        ID000098:
+          Value: false
+        ID000098_corner:
+          Value: false
+        I_-CN1_-CN3:
+          Value: false
+        I_-CN1_-CN4:
+          Value: false
+        I_-CN2_-CN3:
+          Value: false
+        I_-CN2_-CN4:
+          Value: false
+        I_-CN3_-CN1:
+          Value: false
+        I_-CN3_-CN2:
+          Value: false
+        I_-CN3_-CN5:
+          Value: false
+        I_-CN3_-CN6:
+          Value: false
+        I_-CN4_-CN1:
+          Value: false
+        I_-CN4_-CN2:
+          Value: false
+        I_-CN4_-CN5:
+          Value: false
+        I_-CN4_-CN6:
+          Value: false
+        I_-CN5_-CN3:
+          Value: false
+        I_-CN5_-CN4:
+          Value: false
+        I_-CN6_-CN3:
+          Value: false
+        I_-CN6_-CN4:
+          Value: false
+        channel0:
+          Value: false
+        channel1:
+          Value: false
+        channel2:
+          Value: false
+        channel3:
+          Value: false
+        channel4:
+          Value: false
+        channel5:
+          Value: false
+        gearbox:
+          Value: true
+        gearbox_rf:
+          Value: true
+        left_arm/base:
+          Value: false
+        left_arm/base_link:
+          Value: false
+        left_arm/ee_link:
+          Value: false
+        left_arm/forearm_link:
+          Value: false
+        left_arm/screwdriver:
+          Value: true
+        left_arm/screwdriver_tip:
+          Value: true
+        left_arm/shoulder_link:
+          Value: false
+        left_arm/tool0:
+          Value: false
+        left_arm/upper_arm_link:
+          Value: false
+        left_arm/world:
+          Value: false
+        left_arm/wrist_1_link:
+          Value: false
+        left_arm/wrist_2_link:
+          Value: false
+        left_arm/wrist_3_link:
+          Value: false
+        right_arm/asus_xtion_depth_frame:
+          Value: false
+        right_arm/asus_xtion_depth_optical_frame:
+          Value: false
+        right_arm/asus_xtion_link:
+          Value: false
+        right_arm/asus_xtion_rgb_frame:
+          Value: false
+        right_arm/asus_xtion_rgb_optical_frame:
+          Value: false
+        right_arm/base:
+          Value: false
+        right_arm/base_link:
+          Value: false
+        right_arm/ee_link:
+          Value: false
+        right_arm/fingers:
+          Value: true
+        right_arm/forearm_link:
+          Value: false
+        right_arm/gripper:
+          Value: false
+        right_arm/shoulder_link:
+          Value: false
+        right_arm/tool0:
+          Value: false
+        right_arm/upper_arm_link:
+          Value: false
+        right_arm/world:
+          Value: false
+        right_arm/wrist_1_link:
+          Value: false
+        right_arm/wrist_2_link:
+          Value: false
+        right_arm/wrist_3_link:
+          Value: false
+        world:
+          Value: true
+      Marker Scale: 0.5
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        world:
+          13_corrected_hole:
+            {}
+          13_corrected_screw:
+            {}
+          14_corrected_hole:
+            {}
+          14_corrected_screw:
+            {}
+          1_corrected_hole:
+            {}
+          1_corrected_screw:
+            {}
+          21_corrected_hole:
+            {}
+          21_corrected_screw:
+            {}
+          22_corrected_hole:
+            {}
+          22_corrected_screw:
+            {}
+          2_corrected_hole:
+            {}
+          2_corrected_screw:
+            {}
+          3_corrected_hole:
+            {}
+          3_corrected_screw:
+            {}
+          4_corrected_hole:
+            {}
+          4_corrected_screw:
+            {}
+          5_corrected_hole:
+            {}
+          5_corrected_screw:
+            {}
+          6_corrected_hole:
+            {}
+          6_corrected_screw:
+            {}
+          gearbox_rf:
+            ID000001:
+              ID000038:
+                ID000039:
+                  ID000039_corner:
+                    {}
+                ID000040:
+                  ID000040_corner:
+                    {}
+                ID000041:
+                  ID000041_corner:
+                    {}
+                ID000042:
+                  ID000042_corner:
+                    {}
+                ID000043:
+                  ID000043_corner:
+                    {}
+                ID000044:
+                  ID000044_corner:
+                    {}
+                ID000045:
+                  ID000045_corner:
+                    {}
+                  ID000046:
+                    ID000046_corner:
+                      {}
+                  ID000047:
+                    ID000047_corner:
+                      {}
+                  ID000048:
+                    ID000048_corner:
+                      {}
+                ID000049:
+                  ID000049_corner:
+                    {}
+                ID000050:
+                  ID000050_corner:
+                    {}
+                ID000051:
+                  ID000051_corner:
+                    {}
+                ID000052:
+                  ID000052_corner:
+                    {}
+                ID000053:
+                  ID000053_corner:
+                    {}
+                ID000054:
+                  ID000054_corner:
+                    {}
+                ID000055:
+                  ID000055_corner:
+                    {}
+                ID000056:
+                  ID000056_corner:
+                    {}
+                ID000057:
+                  ID000057_corner:
+                    {}
+                ID000058:
+                  ID000058_corner:
+                    {}
+                ID000059:
+                  ID000059_corner:
+                    {}
+                ID000060:
+                  ID000060_corner:
+                    {}
+                ID000061:
+                  ID000061_corner:
+                    {}
+                ID000062:
+                  ID000062_corner:
+                    {}
+              ID000063:
+                ID000064:
+                  ID000064_corner:
+                    {}
+                  ID000065:
+                    ID000065_corner:
+                      {}
+                ID000066:
+                  ID000066_corner:
+                    {}
+                  ID000067:
+                    ID000067_corner:
+                      {}
+                ID000068:
+                  ID000068_corner:
+                    {}
+                  ID000069:
+                    ID000069_corner:
+                      {}
+              ID000070:
+                ID000071:
+                  ID000071_corner:
+                    {}
+                ID000072:
+                  ID000072_corner:
+                    {}
+                ID000073:
+                  ID000073_corner:
+                    {}
+                ID000074:
+                  ID000074_corner:
+                    {}
+                ID000075:
+                  ID000075_corner:
+                    {}
+                ID000076:
+                  ID000076_corner:
+                    {}
+                ID000077:
+                  ID000077_corner:
+                    {}
+                ID000078:
+                  ID000078_corner:
+                    {}
+                ID000079:
+                  ID000079_corner:
+                    {}
+                ID000080:
+                  ID000080_corner:
+                    {}
+                ID000081:
+                  ID000081_corner:
+                    {}
+                ID000082:
+                  ID000082_corner:
+                    {}
+                ID000083:
+                  ID000083_corner:
+                    {}
+                ID000084:
+                  ID000084_corner:
+                    {}
+                ID000085:
+                  ID000085_corner:
+                    {}
+                ID000086:
+                  ID000086_corner:
+                    {}
+                ID000087:
+                  ID000087_corner:
+                    {}
+                ID000088:
+                  ID000088_corner:
+                    {}
+                ID000089:
+                  ID000089_corner:
+                    {}
+                ID000090:
+                  ID000090_corner:
+                    {}
+                ID000091:
+                  ID000091_corner:
+                    {}
+                ID000092:
+                  ID000092_corner:
+                    {}
+                ID000093:
+                  ID000093_corner:
+                    {}
+                ID000094:
+                  ID000094_corner:
+                    {}
+                ID000095:
+                  ID000095_corner:
+                    {}
+                ID000096:
+                  ID000096_corner:
+                    {}
+                ID000097:
+                  ID000097_corner:
+                    {}
+                ID000098:
+                  ID000098_corner:
+                    {}
+              gearbox:
+                I_-CN1_-CN3:
+                  {}
+                I_-CN1_-CN4:
+                  {}
+                I_-CN2_-CN3:
+                  {}
+                I_-CN2_-CN4:
+                  {}
+                I_-CN3_-CN1:
+                  {}
+                I_-CN3_-CN2:
+                  {}
+                I_-CN3_-CN5:
+                  {}
+                I_-CN3_-CN6:
+                  {}
+                I_-CN4_-CN1:
+                  {}
+                I_-CN4_-CN2:
+                  {}
+                I_-CN4_-CN5:
+                  {}
+                I_-CN4_-CN6:
+                  {}
+                I_-CN5_-CN3:
+                  {}
+                I_-CN5_-CN4:
+                  {}
+                I_-CN6_-CN3:
+                  {}
+                I_-CN6_-CN4:
+                  {}
+                channel0:
+                  {}
+                channel1:
+                  {}
+                channel2:
+                  {}
+                channel3:
+                  {}
+                channel4:
+                  {}
+                channel5:
+                  {}
+          left_arm/world:
+            left_arm/base_link:
+              left_arm/base:
+                {}
+              left_arm/shoulder_link:
+                left_arm/upper_arm_link:
+                  left_arm/forearm_link:
+                    left_arm/wrist_1_link:
+                      left_arm/wrist_2_link:
+                        left_arm/wrist_3_link:
+                          left_arm/ee_link:
+                            left_arm/screwdriver:
+                              left_arm/screwdriver_tip:
+                                {}
+                          left_arm/tool0:
+                            {}
+          right_arm/world:
+            right_arm/base_link:
+              right_arm/base:
+                {}
+              right_arm/shoulder_link:
+                right_arm/upper_arm_link:
+                  right_arm/forearm_link:
+                    right_arm/wrist_1_link:
+                      right_arm/wrist_2_link:
+                        right_arm/wrist_3_link:
+                          right_arm/ee_link:
+                            right_arm/gripper:
+                              right_arm/asus_xtion_link:
+                                right_arm/asus_xtion_depth_frame:
+                                  right_arm/asus_xtion_depth_optical_frame:
+                                    {}
+                                right_arm/asus_xtion_rgb_frame:
+                                  right_arm/asus_xtion_rgb_optical_frame:
+                                    {}
+                              right_arm/fingers:
+                                {}
+                          right_arm/tool0:
+                            {}
+      Update Interval: 0
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /occupied_cells_vis_array
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /rviz_visual_markers
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: visualization_marker_array
+      Name: Gearbox
+      Namespaces:
+        "": true
+      Queue Size: 100
+      Value: true
+  Enabled: true
+  Global Options:
+    Background Color: 48; 48; 48
+    Default Light: true
+    Fixed Frame: world
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz/Interact
+      Hide Inactive Objects: true
+    - Class: rviz/MoveCamera
+    - Class: rviz/Select
+  Value: true
+  Views:
+    Current:
+      Class: rviz/XYOrbit
+      Distance: 2.868906259536743
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.05999999865889549
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
+      Focal Point:
+        X: -0.2690694332122803
+        Y: 0.41160646080970764
+        Z: 4.6193656544346595e-7
+      Focal Shape Fixed Size: true
+      Focal Shape Size: 0.05000000074505806
+      Invert Z Axis: false
+      Name: Current View
+      Near Clip Distance: 0.009999999776482582
+      Pitch: 0.7897972464561462
+      Target Frame: world
+      Value: XYOrbit (rviz)
+      Yaw: 0.0935811698436737
+    Saved: ~
+Window Geometry:
+  Displays:
+    collapsed: false
+  Height: 1025
+  Help:
+    collapsed: false
+  Hide Left Dock: false
+  Hide Right Dock: false
+  LeftArmMotionPlanning:
+    collapsed: false
+  LeftArmMotionPlanning - Trajectory Slider:
+    collapsed: false
+  QMainWindow State: 000000ff00000000fd0000000100000000000002a2000003a7fc020000000bfb000000100044006900730070006c006100790073010000003d000003a7000000c900fffffffb0000000800480065006c00700000000342000000bb0000006e00fffffffb0000000a0056006900650077007300000003b0000000b0000000a400fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000fb0000002a004c00650066007400410072006d004d006f00740069006f006e0050006c0061006e006e0069006e0067000000010c000001940000018900fffffffb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000fb0000002c0052006900670068007400410072006d004d006f00740069006f006e0050006c0061006e006e0069006e006700000001770000026d0000018900fffffffb00000052004c00650066007400410072006d004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000004100fffffffb000000540052006900670068007400410072006d004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000004100ffffff00000495000003a700000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  RightArmMotionPlanning:
+    collapsed: false
+  RightArmMotionPlanning - Trajectory Slider:
+    collapsed: false
+  Views:
+    collapsed: false
+  Width: 1853
+  X: 67
+  Y: 27

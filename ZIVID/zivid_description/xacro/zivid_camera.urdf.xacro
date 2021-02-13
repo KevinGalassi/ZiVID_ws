@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+ 
+  <xacro:macro name="zivid" params="parent name *origin ">
+
+   <joint name="${name}_flange" type="fixed" >
+      <parent link="tool0" />
+      <child link="${name}_flange" />
+      <xacro:insert_block name="origin" />
+   </joint>
+
+
+
+<!--     FLANGIA -->
+    
+    <link name="${name}_flange">
+      <visual>
+        <geometry>
+          <mesh filename="package://zivid_description/models/zivid_camera/Zivid_flange.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="black">
+          <color rgba="0.1 0.1 0.1 1"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://zivid_description/models/zivid_camera/Zivid_flange.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+	      <material name="black"/>
+      </collision>
+    </link>
+
+
+<!--     EXTENDER   -->
+    <joint name="${name}_base_joint" type="fixed" >
+      <parent link="${name}_flange" />
+      <child link="${name}_extender" />
+      <limit effort="100" lower="-0.001" upper="0.04" velocity="2.0"/>
+      <origin xyz="0.0 0.0 0.03575" rpy="0 0 ${pi}"/>
+      <axis xyz="0 1 0" />
+    </joint>
+
+    <link name="${name}_extender">
+      <visual>
+        <geometry>
+          <mesh filename="package://zivid_description/models/zivid_camera/Zivid_extender.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="black">
+          <color rgba="100 100 100 1"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://zivid_description/models/zivid_camera/Zivid_extender.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+	      <material name="black"/>
+      </collision>
+    </link>
+
+
+<!--   CAMERA -->
+    <joint name="${name}_camera_joint" type="fixed" >
+      <parent link="${name}_extender" />
+      <child link="${name}_camera" />
+      <limit effort="100" lower="-0.001" upper="0.04" velocity="2.0"/>
+      <origin xyz="-0.065 0.118 0.02" rpy="0 0 0"/>
+      <axis xyz="0 1 0" />
+    </joint>
+
+    <link name="${name}_camera">
+      <visual>
+        <geometry>
+          <mesh filename="package://zivid_description/models/zivid_camera/Zivid_camera.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="black">
+          <color rgba="100 100 100 1"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://zivid_description/models/zivid_camera/Zivid_camera.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+	      <material name="black"/>
+      </collision>
+    </link>
+
+
+   </xacro:macro>
+</robot>
+

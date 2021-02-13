@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<launch>
+
+   <arg name="left_active" value="true"/>
+   <arg name="right_active" value="true"/>
+
+   <arg name="limited" default="true"/>
+   <arg name="paused" default="true"/>
+   <arg name="gui" default="true"/>
+   <arg name="scene_file" default="$(find zivid_description)/scene/table.scene"/> 
+
+   <arg name="right_ns" default="right_arm"/>
+   <arg name="right_y" default="0.470"/>   
+   <arg name="right_z" default="0.01"/>
+   <arg name="right_Z" default="3.14"/>  
+   <arg name="right_tool" default="'true'"/>
+   
+   <arg name="left_ns" default="left_arm"/>
+   <arg name="left_y" default="-0.470"/>
+   <arg name="left_z" default="0.0001"/>    
+   <arg name="left_Z" default="0.0"/>  
+   <arg name="left_tool" default="true"/>
+   
+   <arg name="rviz" value="true"/>
+
+
+
+   <group if="$(arg right_active)" >
+
+      <include file="$(find zivid_bringup)/launch/ur5_bringup_zivid.launch" />
+      <group ns="$(arg right_ns)" >
+         <node pkg="tf" type="static_transform_publisher" name="$(arg right_ns)_broadcaster" args="0 0 0 0 0 0 world $(arg right_ns)/world  100" />
+         <include file="$(find station_ur5_moveit_config)/launch/move_group.launch" />
+      </group>
+
+   </group>
+
+
+
+   <group if="$(arg left_active)" >
+
+      <include file="$(find zivid_bringup)/launch/ur5e_bringup_zivid.launch" />
+      <group ns="$(arg left_ns)" >
+         <node pkg="tf" type="static_transform_publisher" name="$(arg left_ns)_broadcaster" args="0 0 0 0 0 0 world $(arg left_ns)/world 100" />
+         <include file="$(find station_ur5_e_moveit_config)/launch/move_group.launch"/> 
+      </group>
+   
+   </group>
+
+
+
+   <group if="$(arg rviz)">
+      <arg name="rvizconfig" default="$(find zivid_description)/rviz/zivid_simulation.rviz" />
+      <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true"/>
+   </group>
+
+
+</launch>

@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="world"  default="empty"/>  <!-- empty, ... (see ../worlds) -->
+  <arg name="robot"  value="steel"/>          <!-- see tiago_description/robots/tiago_* -->
+  <arg name="gzpose" default="-x 0.2 -y 0.4 -z 0.0 -R 0.0 -P 0.0 -Y 0.0"/>
+  <arg name="gui" default="true"/>
+  <arg name="debug" default="false"/>
+  <arg name="recording" default="false"/>
+  <arg name="public_sim" value="true"/>
+  <arg name="use_moveit_camera" default="false"/>
+  <arg name="tuck_arm" default="true"/>
+  <arg name="rviz" default="true"/>
+  
+  <arg name="/use_sim_time" value="true"/>
+ 
+  <!--<env name="GAZEBO_MODEL_PATH" value="$(find wm_ur5_simulation)/models:$(optenv GAZEBO_MODEL_PATH)"/>-->
+  <!--env name="GAZEBO_MODEL_PATH" value="/home/oem/wm_sim/src/wm_ur5_simulation/models/"/-->
+  
+  <!--env name="ROSCONSOLE_CONFIG_FILE" value="$(find move_rt)/custom_rosconsole.conf"/-->
+  
+  <env name="LC_NUMERIC" value="C" />
+  
+    <node pkg="tf" type="static_transform_publisher" name="world_publisher" args="0.2 0.6 0 0 0 0 1 world odom 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="gripper_tip_publisher" args="0.08 0.0 0 0 0 0 1 gripper_grasping_frame gripper_tip 100"/>
+      <!--node pkg="tf" type="static_transform_publisher" name="tiago_pico_static_tf"
+        args=" 0.059826 0.007068 0.06909
+		0.51510 0.47005 -0.47960 0.53264
+		arm_5_link pico_flexx_link 100" /-->
+    
+    <!--node pkg="wm_ur5_simulation" type="jacobian_pubtiago" name="jacobian_pub"/-->
+
+  <!-- start up world -->
+  <!--include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find tiago_gazebo)/worlds/$(arg world).world"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="debug" value="$(arg debug)"/>
+    <arg name="recording" value="$(arg recording)"/>
+    <remap from="tf" to="gazebo_tf"/> 
+  </include-->
+
+
+  <!-- spawn robot in simulation -->
+<!--  <include file="$(find tiago_gazebo)/launch/tiago_spawn.launch">
+    <arg name="robot"  value="$(arg robot)"/>
+    <arg name="gzpose" value="$(arg gzpose)"/>
+  </include>
+  -->
+    <!--include file="$(find joint_state_remap)/launch/joint_robot_state.launch">
+  </include-->
+
+<!--  <include file="$(find tiago_gazebo)/launch/simulation_tiago_bringup.launch">
+    <arg name="robot"       value="$(arg robot)"/>
+    <arg name="public_sim"  value="$(arg public_sim)"/>
+    <arg name="use_moveit_camera" value="$(arg use_moveit_camera)"/>
+  </include> -->
+ 
+    <include file="$(find tiago_gazebo)/launch/tiago_gazebo.launch">
+    <arg name="robot"       value="$(arg robot)"/>
+    <arg name="public_sim"  value="$(arg public_sim)"/>
+  </include> 
+  
+  
+    <!--node pkg="rosservice" type="rosservice" name="start_sim" args="call wait /gazebo/unpause_physics" /-->
+    
+    <rosparam file="$(find move_rt)/config/tasks_arm_tiago.yaml" command="load"/>    
+    
+    <!--node name="spawn_gazebo_WMEU_1_0" pkg="gazebo_ros" type="spawn_model" args="-sdf -file $(find move_rt)/models/model_open_door.sdf -model WMEU_1_0 -x 1.05 -y 0.55 -z 0.0 -R 0.0 -P 0.0 -Y -1.57" respawn="false" output="screen" /-->
+
+
+    <node pkg="move_rt" type="move_rt_node" name="move_rt" launch-prefix="xterm -e gdb --args"/>
+
+    <node pkg="move_rt" type="positioninterface" name="positioninterface" launch-prefix="xterm -e gdb --args" args="arm_controller/command"/>
+
+    <group if="$(arg rviz)">
+        <arg name="rvizconfig" default="$(find move_rt)/config/move_rt.rviz" />
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true"/>
+    </group>
+
+</launch>

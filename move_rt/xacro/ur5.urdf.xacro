@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!-- xacro for rg2 mounted on the manipulator -->
+
+<robot name="ur5" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="ns" default=""/>      
+  <xacro:arg name="x" default="0.0"/>
+  <xacro:arg name="y" default="0.0"/>
+  <xacro:arg name="z" default="0.0"/>
+  <xacro:arg name="X" default="0.0"/>
+  <xacro:arg name="Y" default="0.0"/>
+  <xacro:arg name="Z" default="0.0"/>
+
+  <xacro:property name="M_PI" value="3.14159265359" />
+  <xacro:property name="kinect_prefix" value=""/>
+  <xacro:property name="robot_prefix" value=""/>
+
+  <xacro:property name="limited" value="true" />
+  <xacro:property name="transmission_hw_interface" value="hardware_interface/VelocityJointInterface" />
+
+  <!-- common stuff -->
+  <xacro:include filename="$(find move_rt)/xacro/common.gazebo.xacro" />
+
+  <!-- ur5 -->
+  <xacro:include filename="$(find ur_description)/urdf/ur5.urdf.xacro" />
+
+<!--   <xacro:include filename="$(find uc1_simulation)/xacro/arm_extras_ur5.urdf.xacro" />
+ -->
+ <link name="world" />
+
+
+  <!-- arm -->
+  <xacro:ur5_robot prefix="${robot_prefix}" joint_limited="false"  
+    shoulder_pan_lower_limit="${-pi}" shoulder_pan_upper_limit="${pi}"
+    shoulder_lift_lower_limit="${-pi}" shoulder_lift_upper_limit="${pi}"
+    elbow_joint_lower_limit="${-pi}" elbow_joint_upper_limit="${pi}"
+    wrist_1_lower_limit="${-pi}" wrist_1_upper_limit="${pi}"
+    wrist_2_lower_limit="${-pi}" wrist_2_upper_limit="${pi}"
+    wrist_3_lower_limit="${-pi}" wrist_3_upper_limit="${pi}"
+    transmission_hw_interface="${transmission_hw_interface}"
+  />
+
+  <!-- 3D sensor -->
+<!--   <xacro:include filename="$(find hector_sensors_description)/urdf/asus_camera.urdf.xacro" /> -->
+
+  <!--<xacro:asus_camera name="asus_xtion" parent="${kinect_prefix}kinect_back_link">
+    <origin xyz="0.0 0.0 0.0" rpy="1.57 0.0 0.0" />
+  </xacro:asus_camera>-->
+
+<!--   <xacro:arm_extras prefix="${robot_prefix}" joint_limited="false" kinect_prefix="${kinect_prefix}"/>
+ -->
+
+  <!-- world will be root link-->
+
+  <joint name="world_${robot_prefix}joint" type="fixed">
+    <parent link="world" />
+    <child link = "${robot_prefix}base_link" />
+    <origin xyz="$(arg x) $(arg y) $(arg z)" rpy="$(arg X) $(arg Y) $(arg Z)" />
+  </joint>
+
+
+</robot>

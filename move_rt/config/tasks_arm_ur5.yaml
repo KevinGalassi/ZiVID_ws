@@ -1,0 +1,44 @@
+#TasksHierarchy: [JointLimiter, singularityavoidance, EePosition, dqMinimizer] 
+#TasksHierarchy: [JointLimiter, EePosition, dqMinimizer] 
+#TasksHierarchy: [JointLimiter, JointPosition, EePosition, dqMinimizer]
+TasksHierarchy: [EmergencyStop, JointLimiter, JointPosition, EePosition, dqMinimizer]
+
+controller_topic: arm_velocity_controller
+joint_state_topic: joint_states
+
+constraints:
+  stopped_velocity_tolerance: 0.1
+
+
+n: 6
+dqmax: [10, 10, 10, 10, 10, 10]
+dqmin: [-10, -10, -10, -10, -10, -10]
+cycleHz: 25
+eta:  0.001
+ordered_joints: [shoulder_pan_joint, shoulder_lift_joint, elbow_joint, wrist_1_joint, wrist_2_joint, wrist_3_joint]
+
+  
+dqMinimizer: {m: 6, K: [1, 1, 1, 1, 1, 1]}
+JointLimiter: {m: 12, xm: [6, -6, 6, -6, 6, -6, 6, -6, 6, -6, 6, -6], b: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], K: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]}
+EePosition: {base_link: world, ee_link: ee_link, group: manipulator, m: 6, K: [2, 2, 2, 0.05, 0.05, 0.05]}
+JointPosition: {m: 6, K: [5, 5, 5, 5, 5, 5]}
+EmergencyStop: {m: 6, K: [5, 5, 5, 5, 5, 5]}
+singularityavoidance: {m: 1, xm: [0.1], b: [0.2], K: [1]}
+ObstacleAvoidance: {m: 1, xm: [0.01], b: [0.02], K: [0.2]}
+
+#  constraints:
+#      goal_time: 0.6
+#      stopped_velocity_tolerance: 0.05
+#      shoulder_pan_joint: {trajectory: 0.1, goal: 0.1}
+#      shoulder_lift_joint: {trajectory: 0.1, goal: 0.1}
+#      elbow_joint: {trajectory: 0.1, goal: 0.1}
+#      wrist_1_joint: {trajectory: 0.1, goal: 0.1}
+#      wrist_2_joint: {trajectory: 0.1, goal: 0.1}
+#      wrist_3_joint: {trajectory: 0.1, goal: 0.1}
+#      #rg2_joint: {trajectory: 0.1, goal: 0.1}
+#      #world_joint/x: {trajectory: 0.1, goal: 0.1}
+#      #world_joint/y: {trajectory: 0.1, goal: 0.1}
+#      #world_joint/theta: {trajectory: 0.1, goal: 0.1}
+#  stop_trajectory_duration: 0.5
+#  state_publish_rate:  25
+#  action_monitor_rate: 10

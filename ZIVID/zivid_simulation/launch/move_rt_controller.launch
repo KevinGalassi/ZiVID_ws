@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<launch>
+   <arg name="limited" default="true"/>
+   <arg name="paused" default="true"/>
+   <arg name="gui" default="true"/>
+   <arg name="scene_file" default="$(find zivid_description)/scene/table.scene"/> 
+
+   <arg name="right_ns" default="right_arm"/>
+   <arg name="right_y" default="0.470"/>    
+   <arg name="right_z" default="0.01"/>
+   <arg name="right_Z" default="3.14"/>  
+    
+   <arg name="left_ns" default="left_arm"/>
+   <arg name="left_y" default="-0.470"/>
+   <arg name="left_z" default="0.001"/>     
+   <arg name="left_Z" default="0.0"/>  
+    
+
+    <!-- SIMULATION -->
+   <group ns="$(arg left_ns)">        
+      <rosparam file="$(find move_rt)/controllers/arm_controller_ur5.yaml" command="load"/> 
+      <node name="arm_velocity_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_velocity_controller" respawn="false" output="screen"/>
+      <rosparam file="$(find zivid_simulation)/config/p2p_left_arm_simu.yaml" command="load"/>
+      <node pkg="move_rt" type="move_rt_node" name="move_rt_left" launch-prefix="xterm -e"/>
+   </group>  
+
+
+   <group ns="$(arg right_ns)">        
+
+      <rosparam file="$(find move_rt)/controllers/arm_controller_ur5.yaml" command="load"/> 
+      <node name="arm_velocity_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_velocity_controller" respawn="false" output="screen"/>
+      <rosparam file="$(find zivid_simulation)/config/p2p_right_arm_simu.yaml" command="load"/>
+      <node pkg="move_rt" type="move_rt_node" name="move_rt_right" launch-prefix="xterm -e"/>
+   </group>  
+
+
+   <node pkg="rosservice" type="rosservice" name="start_sim" args="call --wait /gazebo/unpause_physics" />
+
+
+
+
+</launch>

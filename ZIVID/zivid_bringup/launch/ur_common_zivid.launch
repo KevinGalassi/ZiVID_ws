@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<launch>
+   <arg name="debug"                    default="false" />
+   <arg name="use_tool_communication"   />
+   <arg name="controller_config_file"   />
+   <arg name="robot_ip"                 />
+   <arg name="reverse_port"             default="50001" />
+   <arg name="script_sender_port"       default="50002" />
+   <arg name="kinematics_config" />
+   <arg name="tf_prefix"                default=""/>
+   <arg name="controllers"              default="joint_state_controller force_torque_sensor_controller robot_status_controller" />
+   <arg name="stopped_controllers"      default="pos_joint_traj_controller joint_group_vel_controller" />
+   <arg name="tool_voltage"             default="0" />
+   <arg name="tool_parity"              default="0" />
+   <arg name="tool_baud_rate"           default="115200" />
+   <arg name="tool_stop_bits"           default="1" />
+   <arg name="tool_rx_idle_chars"       default="1.5" />
+   <arg name="tool_tx_idle_chars"       default="3.5" />
+   <arg name="tool_device_name"         default="/tmp/ttyUR" />
+   <arg name="tool_tcp_port"            default="54321" />
+   <arg name="robot_description_file" />
+   <arg name="limited"                  default="false" />
+   <arg name="headless_mode"            default="false" />
+   <arg name="tf_prefix"                default="left_arm/" />
+
+
+
+<!-- Additional -->
+   <arg name="ns"  default=""/>      
+   <arg name="x"   default="0.0"/>
+   <arg name="y"   default="0.0"/>
+   <arg name="z"   default="0.0"/>
+   <arg name="X"   default="0.0"/>
+   <arg name="Y"   default="0.0"/>
+   <arg name="Z"   default="0.0"/>
+
+   <arg name="gripper"         default="false"/>
+   <arg name="gripper_no_cam"  default="false"/>
+   <arg name="screwdriver"     default="false"/>
+
+
+
+  <!-- robot model -->
+   <include file="$(arg robot_description_file)">
+      <arg name="limited"           value="$(arg limited)"/>
+      <arg name="kinematics_config" value="$(arg kinematics_config)"/>
+      <arg name="x"                 value="$(arg x)"/>
+      <arg name="y"                 value="$(arg y)"/>
+      <arg name="z"                 value="$(arg z)"/>
+      <arg name="X"                 value="$(arg X)"/>
+      <arg name="Y"                 value="$(arg Y)"/>
+      <arg name="Z"                 value="$(arg Z)"/>
+      <arg name="gripper"           value="$(arg gripper)"/>
+      <arg name="gripper_no_cam"    value="$(arg gripper_no_cam)"/>
+      <arg name="screwdriver"       value="$(arg screwdriver)"/>
+   </include>
+
+  <!-- Convert joint states to /tf tranforms -->
+   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
+      <param name="publish_frequency"     type="double"  value="50.0" />
+      <param name="tf_prefix"             type="string"  value="$(arg tf_prefix)" />
+   </node>
+
+   <include file="$(find ur_robot_driver)/launch/ur_control.launch">
+      <arg name="debug"                   value="$(arg debug)"/>
+      <arg name="use_tool_communication"  value="$(arg use_tool_communication)"/>
+      <arg name="controller_config_file"  value="$(arg controller_config_file)"/>
+      <arg name="robot_ip"                value="$(arg robot_ip)"/>
+      <arg name="reverse_port"            value="$(arg reverse_port)"/>
+      <arg name="script_sender_port"      value="$(arg script_sender_port)"/>
+      <arg name="kinematics_config"       value="$(arg kinematics_config)"/>
+      <arg name="tf_prefix"               value="$(arg tf_prefix)"/>
+      <arg name="controllers"             value="$(arg controllers)"/>
+      <arg name="stopped_controllers"     value="$(arg stopped_controllers)"/>
+      <arg name="headless_mode"           value="$(arg headless_mode)"/>
+      <arg name="tool_voltage"            value="$(arg tool_voltage)"/>
+      <arg name="tool_parity"             value="$(arg tool_parity)"/>
+      <arg name="tool_baud_rate"          value="$(arg tool_baud_rate)"/>
+      <arg name="tool_stop_bits"          value="$(arg tool_stop_bits)"/>
+      <arg name="tool_rx_idle_chars"      value="$(arg tool_rx_idle_chars)"/>
+      <arg name="tool_tx_idle_chars"      value="$(arg tool_tx_idle_chars)"/>
+      <arg name="tool_device_name"        value="$(arg tool_device_name)"/>
+      <arg name="tool_tcp_port"           value="$(arg tool_tcp_port)"/>
+
+   </include>
+</launch>
