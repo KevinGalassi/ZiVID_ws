@@ -256,6 +256,195 @@ PG70_serial::setPosition(serial::Serial *port, int goal_position, int velocity, 
   port->write(output);
 }
 
+void
+PG70_serial::setPVAC(serial::Serial *port, int goal_position, int velocity, int acceleration, int current)
+{
+  ROS_INFO_STREAM("PG70: Moving from: " << act_position_ << " [mm] to " << goal_position << " [mm]");
+  ROS_INFO("PG70: Data used: %d [mm/s], %d [mm/s2], %d [A]", velocity, acceleration, current);
+  
+  std::vector<uint8_t> output;
+  output.push_back(0x05);                //message from master to module
+  output.push_back(gripper_id_);          //module id
+  output.push_back(0x11);                //11-Len
+  output.push_back(0xB0);                //Command "mov pos"
+
+  //Position <0-69>mm
+  unsigned int IEEE754_bytes[4];
+  float_to_IEEE_754(goal_position,IEEE754_bytes);
+
+  output.push_back(IEEE754_bytes[0]);    //Position first byte
+  output.push_back(IEEE754_bytes[1]);    //Position second byte
+  output.push_back(IEEE754_bytes[2]);    //Position third byte
+  output.push_back(IEEE754_bytes[3]);    //Position fourth byte
+
+  //Velocity<0-82>mm/s
+  float_to_IEEE_754(velocity, IEEE754_bytes);
+  output.push_back(IEEE754_bytes[0]);    //Velocity first byte
+  output.push_back(IEEE754_bytes[1]);    //Velocity second byte
+  output.push_back(IEEE754_bytes[2]);    //Velocity third byte
+  output.push_back(IEEE754_bytes[3]);    //Velocity fourth byte
+
+  //Acceleration<0-320>mm/s2
+  float_to_IEEE_754(acceleration, IEEE754_bytes);
+  output.push_back(IEEE754_bytes[0]);    //Acceleration first byte
+  output.push_back(IEEE754_bytes[1]);    //Acceleration second byte
+  output.push_back(IEEE754_bytes[2]);    //Acceleration third byte
+  output.push_back(IEEE754_bytes[3]);    //Acceleration fourth byte
+
+  //Current<0-2999>mA
+  
+  float current_f = (float)current / 1000.0;
+  std::cout << "Current" << current << "\n";
+
+  float_to_IEEE_754(current_f, IEEE754_bytes);
+
+  output.push_back(IEEE754_bytes[0]);    //Current first byte
+  output.push_back(IEEE754_bytes[1]);    //Current second byte
+  output.push_back(IEEE754_bytes[2]);    //Current third byte
+  output.push_back(IEEE754_bytes[3]);    //Current fourth byte
+
+  //Checksum calculation
+  uint16_t crc = 0;
+
+  for(size_t i = 0; i < output.size(); i++)
+    crc = CRC16(crc,output[i]);
+
+  //Add checksum to the output buffer
+  output.push_back(crc & 0x00ff);
+  output.push_back((crc & 0xff00) >> 8);
+
+  //Send message to the module
+  port->write(output);
+}
+
+void
+PG70_serial::movePosTime(serial::Serial *port, int goal_position, int velocity, int acceleration, int current, int time)
+{
+  ROS_INFO_STREAM("PG70: Moving from: " << act_position_ << " [mm] to " << goal_position << " [mm]");
+  ROS_INFO("PG70: Data used: %d [mm/s], %d [mm/s2], %d [A]", velocity, acceleration, current);
+  
+  std::vector<uint8_t> output;
+  output.push_back(0x05);                //message from master to module
+  output.push_back(gripper_id_);          //module id
+  output.push_back(0x15);                //15-Len
+  output.push_back(0xB1);                //Command "mov pos"
+
+  //Position <0-69>mm
+  unsigned int IEEE754_bytes[4];
+  float_to_IEEE_754(goal_position,IEEE754_bytes);
+
+  output.push_back(IEEE754_bytes[0]);    //Position first byte
+  output.push_back(IEEE754_bytes[1]);    //Position second byte
+  output.push_back(IEEE754_bytes[2]);    //Position third byte
+  output.push_back(IEEE754_bytes[3]);    //Position fourth byte
+
+  //Velocity<0-82>mm/s
+  float_to_IEEE_754(velocity, IEEE754_bytes);
+  output.push_back(IEEE754_bytes[0]);    //Velocity first byte
+  output.push_back(IEEE754_bytes[1]);    //Velocity second byte
+  output.push_back(IEEE754_bytes[2]);    //Velocity third byte
+  output.push_back(IEEE754_bytes[3]);    //Velocity fourth byte
+
+  //Acceleration<0-320>mm/s2
+  float_to_IEEE_754(acceleration, IEEE754_bytes);
+  output.push_back(IEEE754_bytes[0]);    //Acceleration first byte
+  output.push_back(IEEE754_bytes[1]);    //Acceleration second byte
+  output.push_back(IEEE754_bytes[2]);    //Acceleration third byte
+  output.push_back(IEEE754_bytes[3]);    //Acceleration fourth byte
+
+  //Current<0-2999>mA
+  current = current / 1000;
+  float_to_IEEE_754(current, IEEE754_bytes);
+  output.push_back(IEEE754_bytes[0]);    //Current first byte
+  output.push_back(IEEE754_bytes[1]);    //Current second byte
+  output.push_back(IEEE754_bytes[2]);    //Current third byte
+  output.push_back(IEEE754_bytes[3]);    //Current fourth byte
+
+  //Time
+  float_to_IEEE_754(current, IEEE754_bytes);
+  output.push_back(IEEE754_bytes[0]);    //Time first byte
+  output.push_back(IEEE754_bytes[1]);    //Time second byte
+  output.push_back(IEEE754_bytes[2]);    //Time third byte
+  output.push_back(IEEE754_bytes[3]);    //Time fourth byte
+
+  //Checksum calculation
+  uint16_t crc = 0;
+
+  for(size_t i = 0; i < output.size(); i++)
+    crc = CRC16(crc,output[i]);
+
+  //Add checksum to the output buffer
+  output.push_back(crc & 0x00ff);
+  output.push_back((crc & 0xff00) >> 8);
+
+  //Send message to the module
+  port->write(output);
+}
+
+void
+PG70_serial::movePosTimeLoop(serial::Serial *port, int goal_position, int velocity, int acceleration, int current, int time)
+{
+  ROS_INFO_STREAM("PG70: Moving from: " << act_position_ << " [mm] to " << goal_position << " [mm]");
+  ROS_INFO("PG70: Data used: %d [mm/s], %d [mm/s2], %d [A]", velocity, acceleration, current);
+  
+  std::vector<uint8_t> output;
+  output.push_back(0x05);                //message from master to module
+  output.push_back(gripper_id_);          //module id
+  output.push_back(0x15);                //15-Len
+  output.push_back(0xBB);                //Command "mov pos"
+
+  //Position <0-69>mm
+  unsigned int IEEE754_bytes[4];
+  float_to_IEEE_754(goal_position,IEEE754_bytes);
+
+  output.push_back(IEEE754_bytes[0]);    //Position first byte
+  output.push_back(IEEE754_bytes[1]);    //Position second byte
+  output.push_back(IEEE754_bytes[2]);    //Position third byte
+  output.push_back(IEEE754_bytes[3]);    //Position fourth byte
+
+  //Velocity<0-82>mm/s
+  float_to_IEEE_754(velocity, IEEE754_bytes);
+  output.push_back(IEEE754_bytes[0]);    //Velocity first byte
+  output.push_back(IEEE754_bytes[1]);    //Velocity second byte
+  output.push_back(IEEE754_bytes[2]);    //Velocity third byte
+  output.push_back(IEEE754_bytes[3]);    //Velocity fourth byte
+
+  //Acceleration<0-320>mm/s2
+  float_to_IEEE_754(acceleration, IEEE754_bytes);
+  output.push_back(IEEE754_bytes[0]);    //Acceleration first byte
+  output.push_back(IEEE754_bytes[1]);    //Acceleration second byte
+  output.push_back(IEEE754_bytes[2]);    //Acceleration third byte
+  output.push_back(IEEE754_bytes[3]);    //Acceleration fourth byte
+
+  //Current<0-2999>mA
+  current = current / 1000;
+  float_to_IEEE_754(current, IEEE754_bytes);
+  output.push_back(IEEE754_bytes[0]);    //Current first byte
+  output.push_back(IEEE754_bytes[1]);    //Current second byte
+  output.push_back(IEEE754_bytes[2]);    //Current third byte
+  output.push_back(IEEE754_bytes[3]);    //Current fourth byte
+
+  //Time
+  float_to_IEEE_754(current, IEEE754_bytes);
+  output.push_back(IEEE754_bytes[0]);    //Time first byte
+  output.push_back(IEEE754_bytes[1]);    //Time second byte
+  output.push_back(IEEE754_bytes[2]);    //Time third byte
+  output.push_back(IEEE754_bytes[3]);    //Time fourth byte
+
+  //Checksum calculation
+  uint16_t crc = 0;
+
+  for(size_t i = 0; i < output.size(); i++)
+    crc = CRC16(crc,output[i]);
+
+  //Add checksum to the output buffer
+  output.push_back(crc & 0x00ff);
+  output.push_back((crc & 0xff00) >> 8);
+
+  //Send message to the module
+  port->write(output);
+}
+
 float
 PG70_serial::getPosition(serial::Serial *port)
 {
@@ -311,6 +500,66 @@ PG70_serial::getPosition(serial::Serial *port)
     }
   }
 }
+
+float
+PG70_serial::getCurrent(serial::Serial *port)
+{
+  std::vector<uint8_t> output;
+  output.push_back(0x05);                 //message from master to module
+  output.push_back(gripper_id_);           //module id
+  output.push_back(0x06);                 //Data Length
+  output.push_back(0x95);                 //Command get state 
+  output.push_back(0x00);
+  output.push_back(0x00);
+  output.push_back(0x80);
+  output.push_back(0x3F);
+  output.push_back(0x07);               
+
+
+  //Checksum calculation
+  uint16_t crc = 0;
+
+  for(size_t i = 0; i < output.size(); i++)
+    crc = CRC16(crc,output[i]);
+
+  //Add checksum to the output buffer
+  output.push_back(crc & 0x00ff);
+  output.push_back((crc & 0xff00) >> 8);
+
+  //Send message to the module
+  port->write(output);
+  ros::Duration(0.1).sleep();
+
+  std::vector<uint8_t> input;
+  port->read(input, INPUT_BUFFER_SIZE);
+
+  //Detect reached current response
+  float act_current;
+
+  if(input.size() > 0)
+  {
+
+    for(size_t i = 0; i < input.size(); i++)
+    {
+      if  (i == 15)
+      {
+        if((input[i] == 0) && (input[i-1] == 0) && (input[i-2] == 0) && (input[i-3] == 0))
+        {
+//        act_current = 0;
+          ROS_INFO_STREAM("PG70 INFO:" << act_current);
+        }
+        else
+        {
+          uint8_t raw[4] = {input[i], input[i-1], input[i-2], input[i-3]};
+          act_current= IEEE_754_to_float(raw);
+          ROS_INFO_STREAM("PG70 INFO:" << act_current);
+        }
+      }
+    }
+  }
+  return (act_current);
+}
+
 
 void
 PG70_serial::getPeriodicPositionUpdate(serial::Serial *port, float update_period)
@@ -416,11 +665,154 @@ PG70_serial::setPositionCallback(schunk_pg70::set_position::Request &req,
 }
 
 bool
+PG70_serial::setPVACCallback(schunk_pg70::set_pvac::Request &req,
+                                 schunk_pg70::set_pvac::Response &res)
+{
+  
+  //Check if goal request respects position limits <0-69> mm
+  if ((req.goal_position >= MIN_GRIPPER_POS_LIMIT) && (req.goal_position < MAX_GRIPPER_POS_LIMIT))
+  {
+    //Check if goal request respects velocity limits <0-83> mm/s
+    if((req.goal_velocity > MIN_GRIPPER_VEL_LIMIT) && (req.goal_velocity < MAX_GRIPPER_VEL_LIMIT))
+    {
+      //Check if goal request respects acceleration limits <0-320> mm/s2  
+      if((req.goal_acceleration > MIN_GRIPPER_ACC_LIMIT) && (req.goal_acceleration <= MAX_GRIPPER_ACC_LIMIT))
+      {
+        //Check if goal request respects current limits <0-29.99> A 
+        if((req.goal_current > MIN_GRIPPER_CUR_LIMIT) && (req.goal_current <= MAX_GRIPPER_CUR_LIMIT))
+        {
+        setPVAC(com_port_,req.goal_position, req.goal_velocity, req.goal_acceleration, req.goal_current);
+        res.goal_accepted = true;
+        }
+        else
+        {
+          ROS_WARN("PG70: Goal current rejected!");
+          res.goal_accepted = false;
+        }
+      }
+      else
+      {
+        ROS_WARN("PG70: Goal acceleration rejected!");
+        res.goal_accepted = false;
+      }
+    }
+    else
+    {
+      ROS_WARN("PG70: Goal velocity rejected!");
+      res.goal_accepted = false;
+    }
+  }
+  else
+  {
+    ROS_WARN("PG70: Goal position rejected!");
+    res.goal_accepted = false;
+  }
+}
+
+bool
+PG70_serial::movePosTimeCallback(schunk_pg70::move_time::Request &req,
+                                 schunk_pg70::move_time::Response &res)
+{
+  
+  //Check if goal request respects position limits <0-69> mm
+  if ((req.goal_position >= MIN_GRIPPER_POS_LIMIT) && (req.goal_position < MAX_GRIPPER_POS_LIMIT))
+  {
+    //Check if goal request respects velocity limits <0-83> mm/s
+    if((req.goal_velocity > MIN_GRIPPER_VEL_LIMIT) && (req.goal_velocity < MAX_GRIPPER_VEL_LIMIT))
+    {
+      //Check if goal request respects acceleration limits <0-320> mm/s2  
+      if((req.goal_acceleration > MIN_GRIPPER_ACC_LIMIT) && (req.goal_acceleration <= MAX_GRIPPER_ACC_LIMIT))
+      {
+        //Check if goal request respects current limits <0-29.99> A 
+        if((req.goal_current > MIN_GRIPPER_CUR_LIMIT) && (req.goal_current <= MAX_GRIPPER_CUR_LIMIT))
+        {
+        movePosTime(com_port_,req.goal_position, req.goal_velocity, req.goal_acceleration, req.goal_current, req.goal_time);
+        res.goal_accepted = true;
+        }
+        else
+        {
+          ROS_WARN("PG70: Goal current rejected!");
+          res.goal_accepted = false;
+        }
+      }
+      else
+      {
+        ROS_WARN("PG70: Goal acceleration rejected!");
+        res.goal_accepted = false;
+      }
+    }
+    else
+    {
+      ROS_WARN("PG70: Goal velocity rejected!");
+      res.goal_accepted = false;
+    }
+  }
+  else
+  {
+    ROS_WARN("PG70: Goal position rejected!");
+    res.goal_accepted = false;
+  }
+}
+
+bool
+PG70_serial::movePosTimeLoopCallback(schunk_pg70::move_time_loop::Request &req,
+                                 schunk_pg70::move_time_loop::Response &res)
+{
+  
+  //Check if goal request respects position limits <0-69> mm
+  if ((req.goal_position >= MIN_GRIPPER_POS_LIMIT) && (req.goal_position < MAX_GRIPPER_POS_LIMIT))
+  {
+    //Check if goal request respects velocity limits <0-83> mm/s
+    if((req.goal_velocity > MIN_GRIPPER_VEL_LIMIT) && (req.goal_velocity < MAX_GRIPPER_VEL_LIMIT))
+    {
+      //Check if goal request respects acceleration limits <0-320> mm/s2  
+      if((req.goal_acceleration > MIN_GRIPPER_ACC_LIMIT) && (req.goal_acceleration <= MAX_GRIPPER_ACC_LIMIT))
+      {
+        //Check if goal request respects current limits <0-29.99> A 
+        if((req.goal_current > MIN_GRIPPER_CUR_LIMIT) && (req.goal_current <= MAX_GRIPPER_CUR_LIMIT))
+        {
+        movePosTimeLoop(com_port_,req.goal_position, req.goal_velocity, req.goal_acceleration, req.goal_current, req.goal_time);
+        res.goal_accepted = true;
+        }
+        else
+        {
+          ROS_WARN("PG70: Goal current rejected!");
+          res.goal_accepted = false;
+        }
+      }
+      else
+      {
+        ROS_WARN("PG70: Goal acceleration rejected!");
+        res.goal_accepted = false;
+      }
+    }
+    else
+    {
+      ROS_WARN("PG70: Goal velocity rejected!");
+      res.goal_accepted = false;
+    }
+  }
+  else
+  {
+    ROS_WARN("PG70: Goal position rejected!");
+    res.goal_accepted = false;
+  }
+}
+
+bool
 PG70_serial::getPositionCallback(schunk_pg70::get_position::Request &req,
                                  schunk_pg70::get_position::Response &res)
 {
   ROS_INFO("PG70: Get position request recieved");
   res.actual_position = getPosition(com_port_);   
+}
+
+bool
+PG70_serial::getCurrentCallback(schunk_pg70::get_current::Request &req,
+                                 schunk_pg70::get_current::Response &res)
+{
+  ROS_INFO("PG70: Get current request recieved");
+  res.actual_current = getCurrent(com_port_); 
 }
 
 bool
@@ -457,6 +849,7 @@ PG70_serial::stopCallback(schunk_pg70::stop::Request &req,
 void
 PG70_serial::timerCallback(const ros::TimerEvent &event)
 {
+
   std::vector<uint8_t> input;
   com_port_->read(input,INPUT_BUFFER_SIZE);
  
@@ -480,6 +873,18 @@ PG70_serial::timerCallback(const ros::TimerEvent &event)
       uint8_t raw[4] = {input[i+5], input[i+4], input[i+3], input[i+2]};
       act_position_ = IEEE_754_to_float(raw);
     }
+
+    if  (i == 15)
+    {
+      uint8_t raw[4] = {input[i], input[i-1], input[i-2], input[i-3]};
+      act_current_= IEEE_754_to_float(raw);
+    }
+
+    if(i == 11)
+    {
+      uint8_t raw[4] = {input[i], input[i-1], input[i-2], input[i-3]};
+      act_velocity_= IEEE_754_to_float(raw);
+    }
   }
   
   ROS_DEBUG_STREAM("Actual position: " << act_position_);
@@ -488,17 +893,21 @@ PG70_serial::timerCallback(const ros::TimerEvent &event)
   pg70_joint_state_.header.stamp = ros::Time::now();
   pg70_joint_state_.name.clear();
   pg70_joint_state_.position.clear();
+  pg70_joint_state_.velocity.clear();
+  pg70_joint_state_.effort.clear();
     
-  //pg70_joint_state_.name.push_back("pg70_finger1_joint");
-  pg70_joint_state_.name.push_back("schunk_pg70_finger_right_joint");
+  pg70_joint_state_.name.push_back("pg70_finger1_joint");
+  pg70_joint_state_.position.push_back(act_position_/URDF_SCALE_FACTOR);
+  
+  pg70_joint_state_.name.push_back("pg70_finger2_joint");
   pg70_joint_state_.position.push_back(act_position_/URDF_SCALE_FACTOR);
 
+  pg70_joint_state_.velocity.push_back(act_velocity_);
+
+  pg70_joint_state_.effort.push_back(act_current_);
+   
+  joint_pub.publish(pg70_joint_state_);         
   
-  //pg70_joint_state_.name.push_back("pg70_finger2_joint");
-  pg70_joint_state_.name.push_back("schunk_pg70_finger_left_joint");
-  pg70_joint_state_.position.push_back(act_position_/URDF_SCALE_FACTOR);
-            
-  joint_pub.publish(pg70_joint_state_);    
 }
 
 ////////////////////////////////////////////////////

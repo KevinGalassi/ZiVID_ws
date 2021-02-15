@@ -60,7 +60,7 @@
 
 <!-- LEFT FINGER BASE -->
     
-    <joint name="${name}_finger_left_joint" type="prismatic" >
+    <joint name="${name}_finger_left_joint" type="fixed" >
       <parent link="${name}_base_link" />
       <child link="${name}_finger_left_link" />
       <limit effort="100" lower="-0.001" upper="0.04" velocity="2.0"/>
@@ -112,7 +112,7 @@
     
 <!-- RIGHT FINGER BASE -->
 
-    <joint name="${name}_finger_right_joint" type="prismatic" >
+    <joint name="${name}_finger_right_joint" type="fixed" >
       <mimic joint="${name}_finger_left_joint" multiplier="1" offset="0"/>
       <parent link="${name}_base_link" />
       <child link="${name}_finger_right_link" />
@@ -165,7 +165,7 @@
     <joint name="${name}_object_joint" type="fixed" >
       <parent link="${name}_base_link" />
       <child link="${name}_object_link" />
-      <origin xyz="0 0 0.21" rpy="0 0 0"/>
+      <origin xyz="0 0 0.16" rpy="0 0 0"/>
    </joint>
 
     <link name="${name}_object_link">

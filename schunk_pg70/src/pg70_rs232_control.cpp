@@ -44,13 +44,17 @@ main(int argc, char *argv[])
   //Initialize user interface
   ros::ServiceServer reference_service         = nh.advertiseService("schunk_pg70/reference", &schunk_pg70::PG70_serial::referenceCallback, &gripper);
   ros::ServiceServer set_position_service      = nh.advertiseService("schunk_pg70/set_position", &schunk_pg70::PG70_serial::setPositionCallback, &gripper);
+  ros::ServiceServer set_pvac_service          = nh.advertiseService("schunk_pg70/set_pvac", &schunk_pg70::PG70_serial::setPVACCallback, &gripper);
   ros::ServiceServer get_error_service         = nh.advertiseService("schunk_pg70/get_error", &schunk_pg70::PG70_serial::getErrorCallback, &gripper);
   ros::ServiceServer get_position_service      = nh.advertiseService("schunk_pg70/get_position", &schunk_pg70::PG70_serial::getPositionCallback, &gripper);
+  ros::ServiceServer move_time_service	       = nh.advertiseService("schunk_pg70/move_time", &schunk_pg70::PG70_serial::movePosTimeCallback, &gripper);
+  ros::ServiceServer move_time_loop_service    = nh.advertiseService("schunk_pg70/move_time_loop", &schunk_pg70::PG70_serial::movePosTimeLoopCallback, &gripper);
+  ros::ServiceServer get_current_service       = nh.advertiseService("schunk_pg70/get_current", &schunk_pg70::PG70_serial::getCurrentCallback, &gripper);
   ros::ServiceServer acknowledge_error_service = nh.advertiseService("schunk_pg70/acknowledge_error", &schunk_pg70::PG70_serial::acknowledgeErrorCallback, &gripper);
   ros::ServiceServer stop_service              = nh.advertiseService("schunk_pg70/stop", &schunk_pg70::PG70_serial::stopCallback, &gripper);
   
   ros::Timer timer = nh.createTimer(ros::Duration(gripper.TF_UPDATE_PERIOD), &schunk_pg70::PG70_serial::timerCallback, &gripper);
-  gripper.joint_pub = nh.advertise<sensor_msgs::JointState>("schunk_pg70/joint_states", 1);  
+  gripper.joint_pub = nh.advertise<sensor_msgs::JointState>("schunk_pg70/joint_states", 1); 
   
   ros::spin();
 

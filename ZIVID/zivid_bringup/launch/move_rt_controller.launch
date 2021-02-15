@@ -17,7 +17,7 @@
    <arg name="left_Z" default="0.0"/>  
    <arg name="left_tool" default="true"/>
     
-   <arg name="left_active" value="true"/>
+   <arg name="left_active" value="false"/>
    <arg name="right_active" value="true"/>
 
 
@@ -32,7 +32,7 @@
 
    <group if="$(arg right_active)">
 	   <group ns="$(arg right_ns)">        
-		   <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find zivid_description)/xacro/ur5_robot.urdf.xacro' ns:=$(arg right_ns) y:=$(arg right_y) z:=$(arg right_z) Z:=$(arg right_Z) " />
+		   <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find zivid_description)/xacro/ur5_robot.urdf.xacro' ns:=$(arg right_ns) y:=$(arg right_y) z:=$(arg right_z) Z:=$(arg right_Z)" />
          <rosparam file="$(find zivid_bringup)/config/right_arm.yaml" command="load"/>
 		   <node pkg="move_rt" type="move_rt_node" name="move_rt" launch-prefix="xterm -e gdb -ex=run --args"/>
 	   </group>

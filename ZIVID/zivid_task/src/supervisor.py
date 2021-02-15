@@ -4,9 +4,12 @@ import rospy
 import time
 import actionlib
 import copy
-from geometry_msgs.msg import Quaternion
+from geometry_msgs.msg import Quaternion, Pose, Point
 from zivid_msgs.msg import  moveWireAction, moveWireGoal
+from zivid_msgs.srv import takeFrame, takeFrameResponse
 from move_rt.srv import *
+
+
 
 class MainArmWaypoint(object):
 
@@ -29,18 +32,29 @@ class MainArmWaypoint(object):
         print('Right Arm pin to pin Action Client: OK\n')
 
 
-        self.rightArmMoveWireGoal = moveWireGoal()
+        print('Take Camera service')
+        rospy.wait_for_service('take_frame_service')
+        self.takeFrame_srv = rospy.ServiceProxy('take_frame_service', takeFrame)
+        print('Camera Service Service OK')
 
-        self.tool_orientation = [{'orient_w': 0.5, 'orient_x': 0.5, 'orient_y': -0.5, 'orient_z': 0.5, 'time': 5.0}]
-        self.camera_orientation = [{'orient_w': 0.0, 'orient_x': 0.707, 'orient_y': 0.0, 'orient_z': 0.707, 'time': 5.0}]
+
+        self.rightArmMoveWireGoal = moveWireGoal()
+        self.newFrame_resp = takeFrameResponse()
+
 
 
         self.rightToolOrientation = Quaternion()
-        self.rightToolOrientation.w = 0.5
-        self.rightToolOrientation.x = 0.5
-        self.rightToolOrientation.y = -0.5
-        self.rightToolOrientation.z = 0.5
+        self.rightToolOrientation.w = 0.0
+        self.rightToolOrientation.x = 0.707
+        self.rightToolOrientation.y = -0.707
+        self.rightToolOrientation.z = 0.0
 
+        
+        # self.rightToolOrientation.w = 0.5
+        # self.rightToolOrientation.x = 0.5
+        # self.rightToolOrientation.y = -0.5
+        # self.rightToolOrientation.z = 0.5
+        
 
 
         traj_home = [{'orient_w': 0.0, 'orient_x': 0.707, 'orient_y': 0.0, 'orient_z':  0.707, 'pos_x': -0.10931, 'pos_y': +0.38207, 'pos_z': 0.41, 'time': 5.0}]
@@ -55,8 +69,8 @@ class MainArmWaypoint(object):
 
         # Send instruction to right arm
         self.rightArmMoveWireGoal.target_pose.position = target_pose.position
-        self.rightArmMoveWireGoal.target_pose.orientation = rightToolOrientation
-        self.rightArmMoveWireGoal.dispalcement = displacement
+        self.rightArmMoveWireGoal.target_pose.orientation = self.rightToolOrientation
+        self.rightArmMoveWireGoal.displacement = displacement
         self.rightArmMoveWireGoal.release_height = release_height
         self.rightArmMoveWireGoal.requested_action = "Moving"
 
@@ -67,7 +81,7 @@ class MainArmWaypoint(object):
 
         return (result)
 
-    def move_arm(self):
+    def move_homing(self):
 
         self.rightArmMoveWireGoal.requested_action = "Homing"
 
@@ -83,7 +97,31 @@ class MainArmWaypoint(object):
     def run_destination(self):
 
         while(True):
-            continue
+
+            print('Call ZiVID Service')
+            self.newFrame_resp = self.takeFrame_srv()
+
+            new_target_pose = Pose()
+            displacement = Point()
+
+            new_target_pose = self.newFrame_resp.target_pose
+            new_target_pose.position.z -= 0.01
+            displacement = self.newFrame_resp.displacement
+            displacement.x += 0.2
+
+
+
+            release_height = 0.1
+
+            print('Moving')
+            self.move_wire(new_target_pose, displacement, release_height)
+
+            print('Homing')
+            self.move_homing()
+
+            print('Addio')
+
+            break
             
     
 

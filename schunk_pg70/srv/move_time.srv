@@ -1,0 +1,7 @@
+float32 goal_position
+float32 goal_velocity
+float32 goal_acceleration
+float32 goal_current
+float32 goal_time
+---
+bool goal_accepted

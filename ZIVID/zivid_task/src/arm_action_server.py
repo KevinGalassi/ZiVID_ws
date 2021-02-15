@@ -4,12 +4,11 @@ import rospy
 import time
 import actionlib
 import copy
-from zivid_msgs.msg import WaitAction, WaitGoal, moveWireAction, moveWireResult, moveWireFeedback
+from zivid_msgs.msg import moveWireAction, moveWireResult, moveWireFeedback
 from move_rt.msg import ExecutingTrajectoryAction, ExecutingTrajectoryGoal, ExecutingTrajectoryResult
 from move_rt.srv import *
 from std_msgs.msg import Float64MultiArray, Bool
-from schunk_pg70.msg import *
-from schunk_pg70.srv import set_position
+from schunk_pg70.srv import set_pvac
 
 class ArmActionServer(object):
     # create messages that are used to publish feedback/result
@@ -59,8 +58,8 @@ class ArmActionServer(object):
         # Gripper Client
 
         print('Gripper client connection Waiting')
-        rospy.wait_for_service('schunk_pg70/set_position')
-        self.gripper_client = rospy.ServiceProxy('schunk_pg70/set_position', set_position)
+        rospy.wait_for_service('/schunk_pg70/set_pvac')
+        self.gripper_client = rospy.ServiceProxy('/schunk_pg70/set_pvac', set_pvac)
         print('Gripper Service: OK\n')
 
 
@@ -69,24 +68,21 @@ class ArmActionServer(object):
 
         self.clearTraj([0])
         self.moveClientGoal = ExecutingTrajectoryGoal()
-        self.moveHome = ExecutingTrajectoryGoal()
+        self.moveClientGoal.ee_error_th = 0.4
         self.moveClientResult = ExecutingTrajectoryResult()
         self.joint_goal = Float64MultiArray()
         self.home_position = [{'orient_w': -0.123, 'orient_x': 0.7, 'orient_y': 0.122, 'orient_z': 0.69, 'pos_x':  0.23347, 'pos_y': -0.35757, 'pos_z': 0.41, 'time': 5.0}]
 
         self.pause_timeout = 0.5
 
-        self.moveHome.trajectory_name = '/{}traj_home'.format(self.arm)
-        rospy.set_param(self.moveHome.trajectory_name, self.home_position)
-       
 
         self.starting_height = 0.10
         
         self.gripper_velocity = 50
         self.gripper_acceleration = 100
+        self.setToolFrame('schunk_pg70_object_link')
+        self.ArmActionServer_as.start()
 
-
-        self.ArmActionServer_as.start()  
         print('ArmActionServer arm Server Ready')
 
 
@@ -97,7 +93,12 @@ class ArmActionServer(object):
 
         if goal.requested_action == 'Moving':
             self.eeEnable([1])
-            self.setToolFrame('fingers') 
+
+            self.clearTraj([0])
+            self.emergencyEnable([1])
+            self.eeEnable([0])
+            print('Gripper Opening')
+            result = self.gripper_client(60, self.gripper_velocity, self.gripper_acceleration, 2000)
             
 
             print('Reach Starting position')
@@ -110,13 +111,14 @@ class ArmActionServer(object):
             self.traj_list[0]['pos_y'] = goal.target_pose.position.y
             self.traj_list[0]['pos_z'] = goal.target_pose.position.z + self.starting_height
 
-            self.moveClientGoal.trajectory_name = '/{}traj_approach'.format(self.arm)
-            rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
 
-            print('sending Approaching goal to action server: \ntrajectory name'.format(self.moveClientGoal.trajectory_name))
-
+            print('sending Approaching goal to action server \n')
             self.emergencyEnable([0])
             self.eeEnable([1])
+
+            self.moveClientGoal.trajectory_name = '/{}traj_approach'.format(self.arm)
+            rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
+            
             self.move_client.send_goal(self.moveClientGoal)
             result_ok = self.move_client.wait_for_result()
             print(result_ok)
@@ -126,40 +128,38 @@ class ArmActionServer(object):
             self.clearTraj([0])
 
             # Descend to the component location
+
+            print('sending Descending goal to action server \n')
+
             self.traj_list[0]['pos_z'] = self.traj_list[0]['pos_z'] - self.starting_height
             self.moveClientGoal.trajectory_name = '/{}Descending'.format(self.arm)
             rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
-
-            time.sleep(self.pause_timeout)
-
-            print('sending Descending goal to action server: \ntrajectory name = {} \nerror threshold = {}'.format(self.moveClientGoal.trajectory_name, self.moveClientGoal.ee_error_th))
             self.move_client.send_goal(self.moveClientGoal)
             self.move_client.wait_for_result()
             self.moveClientResult = self.move_client.get_result()
-            print(self.move_client.get_result())
-
-            err_count = 0
 
             # Send command to gripper
+            print('Gripper Closing')
+
+            
+
             self.emergencyEnable([1])
             self.eeEnable([0])
             self.clearTraj([0])   
-
-            print('Gripper Closing')
-            result = gripper_client(10, self.gripper_velocity, self.gripper_acceleration)
+            result = self.gripper_client(30, self.gripper_velocity, self.gripper_acceleration, 303)
+            time.sleep(2)
 
 
             # Ascending
+            print('sending Ascending goal to action server')
+
             self.traj_list[0]['pos_z'] = self.traj_list[0]['pos_z'] + self.starting_height
             self.moveClientGoal.trajectory_name = '/{}Ascending'.format(self.arm)
             rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
-
             self.emergencyEnable([0])
             self.eeEnable([1])
-            print('sending Ascending goal to action server: \ntrajectory name = {} \nerror threshold = {}'.format(self.moveClientGoal.trajectory_name, self.moveClientGoal.ee_error_th))
             self.move_client.send_goal(self.moveClientGoal)
             result_ok = self.move_client.wait_for_result()
-            print(result_ok)
             self.clearTraj([0])   
 
             # Moving
@@ -172,7 +172,6 @@ class ArmActionServer(object):
             print('Sending moving goal')
             self.move_client.send_goal(self.moveClientGoal)
             result_ok = self.move_client.wait_for_result()
-            print(result_ok)
             self.clearTraj([0])   
 
 
@@ -181,28 +180,26 @@ class ArmActionServer(object):
             self.clearTraj([0])
             self.emergencyEnable([1])
             self.eeEnable([0])
-            print('Gripper Closing')
-            result = gripper_client(10, self.gripper_velocity, self.gripper_acceleration)
+            print('Gripper Opening')
+            result = self.gripper_client(60, self.gripper_velocity, self.gripper_acceleration, 2000)
 
 
         if goal.requested_action == 'Homing':
             self.eeEnable([0])
             self.JointEnable([1])
             self.emergencyEnable([0])
-            self.joint_goal.data = [-1.57, -0.785, -1.60, -2.16, 1.57, 0.0, 5.0]
+            self.joint_goal.data = [-1.57, -0.785, -1.60, -2.16, 1.57, 0.0, 10.0]
             self.joint_pub.publish(self.joint_goal)
             time.sleep(10)
             self.JointEnable([0])
             self.emergencyEnable([1])
-        
-            self.testerPin2Pin_as_result.success = True
-            self.testerPin2Pin_as.set_succeeded(self.testerPin2Pin_as_result)
+
             print('Arm Home\n')
 
 
         self.ArmActionServer_as_result.success = True
         self.ArmActionServer_as.set_succeeded(self.ArmActionServer_as_result)
-        print('ArmActionServer arm Home\n')
+        print('ArmActionServer arm concluded\n')
 
 
 if __name__ == '__main__':

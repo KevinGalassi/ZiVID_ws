@@ -23,7 +23,17 @@
    
    <arg name="rviz" value="true"/>
 
+   <group if="$(arg left_active)" >
 
+      <include file="$(find zivid_bringup)/launch/ur5e_bringup_zivid.launch" />
+      <group ns="$(arg left_ns)" >
+         <node pkg="tf" type="static_transform_publisher" name="$(arg left_ns)_broadcaster" args="0 0 0 0 0 0 world $(arg left_ns)/world 100" />
+         <include file="$(find station_ur5_e_moveit_config)/launch/move_group.launch"/> 
+      </group>
+
+        <node pkg="tf" type="static_transform_publisher" name="ur_zivid_static_tf" args=" 0.019699 0.066595 0.105907 -0.429386 0.563353 -0.559783 0.430334 left_arm/ee_link zivid_optical_frame 100" />
+   
+   </group>
 
    <group if="$(arg right_active)" >
 
@@ -33,19 +43,14 @@
          <include file="$(find station_ur5_moveit_config)/launch/move_group.launch" />
       </group>
 
+      <include file="$(find schunk_pg70)/launch/pg70_full.launch"/>
+
    </group>
 
 
 
-   <group if="$(arg left_active)" >
 
-      <include file="$(find zivid_bringup)/launch/ur5e_bringup_zivid.launch" />
-      <group ns="$(arg left_ns)" >
-         <node pkg="tf" type="static_transform_publisher" name="$(arg left_ns)_broadcaster" args="0 0 0 0 0 0 world $(arg left_ns)/world 100" />
-         <include file="$(find station_ur5_e_moveit_config)/launch/move_group.launch"/> 
-      </group>
-   
-   </group>
+
 
 
 

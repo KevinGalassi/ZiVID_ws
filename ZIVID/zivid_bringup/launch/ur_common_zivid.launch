@@ -34,9 +34,7 @@
    <arg name="Y"   default="0.0"/>
    <arg name="Z"   default="0.0"/>
 
-   <arg name="gripper"         default="false"/>
-   <arg name="gripper_no_cam"  default="false"/>
-   <arg name="screwdriver"     default="false"/>
+
 
 
 
@@ -50,9 +48,6 @@
       <arg name="X"                 value="$(arg X)"/>
       <arg name="Y"                 value="$(arg Y)"/>
       <arg name="Z"                 value="$(arg Z)"/>
-      <arg name="gripper"           value="$(arg gripper)"/>
-      <arg name="gripper_no_cam"    value="$(arg gripper_no_cam)"/>
-      <arg name="screwdriver"       value="$(arg screwdriver)"/>
    </include>
 
   <!-- Convert joint states to /tf tranforms -->

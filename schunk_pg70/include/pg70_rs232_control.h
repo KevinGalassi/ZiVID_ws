@@ -41,8 +41,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //Service headers
 #include <schunk_pg70/reference.h>
 #include <schunk_pg70/set_position.h>
+#include <schunk_pg70/set_pvac.h>
+#include <schunk_pg70/move_time.h>
+#include <schunk_pg70/move_time_loop.h>
 #include <schunk_pg70/get_error.h>
 #include <schunk_pg70/get_position.h>
+#include <schunk_pg70/get_current.h>
 #include <schunk_pg70/acknowledge_error.h>
 #include <schunk_pg70/stop.h>
 
@@ -72,9 +76,25 @@ public:
   bool getPositionCallback(schunk_pg70::get_position::Request &req,
                            schunk_pg70::get_position::Response &res);
 
-   /** \brief SetPosition service callback */
+  /** \brief GetStatus service callback */
+  bool getCurrentCallback(schunk_pg70::get_current::Request &req,
+                           schunk_pg70::get_current::Response &res);
+
+  /** \brief SetPosition service callback */
   bool setPositionCallback(schunk_pg70::set_position::Request &req,
                            schunk_pg70::set_position::Response &res);
+
+  /** \brief SetPVAC service callback */
+  bool setPVACCallback(schunk_pg70::set_pvac::Request &req,
+                           schunk_pg70::set_pvac::Response &res);
+
+    /** \brief movePosTime service callback */
+  bool movePosTimeCallback(schunk_pg70::move_time::Request &req,
+                           schunk_pg70::move_time::Response &res);
+
+    /** \brief movePosTimeLoop service callback */
+  bool movePosTimeLoopCallback(schunk_pg70::move_time_loop::Request &req,
+                           schunk_pg70::move_time_loop::Response &res);
   
    /** \brief AcknowledgeError service callback */
   bool acknowledgeErrorCallback(schunk_pg70::acknowledge_error::Request &req,
@@ -103,9 +123,21 @@ private:
     
   /** \brief Read actual position by GET_STATE(0x95) command */
   float getPosition(serial::Serial *port);
+
+  /** \brief Read actual position by GET_STATE(0x95) command */
+  float getCurrent(serial::Serial *port);
   
   /** \brief Send MOV_POS(0x80) command to the gripper */
   void setPosition(serial::Serial *port, int goal_position, int velocity, int acceleration);
+
+  /** \brief Send MOV_POS(0xB0) command to the gripper */
+  void setPVAC(serial::Serial *port, int goal_position, int velocity, int acceleration, int current);
+
+   /** \brief Send MOV_POS_TIME(0xB1) command to the gripper */
+  void movePosTime(serial::Serial *port, int goal_position, int velocity, int acceleration, int current, int time);
+
+   /** \brief Send MOV_POS_TIME_LOOP(0xBB) command to the gripper */
+  void movePosTimeLoop(serial::Serial *port, int goal_position, int velocity, int acceleration, int current, int time);
    
   /** \brief Send CMD_ACK(0x8b) command to the gripper */
   void acknowledgeError(serial::Serial *port);
@@ -124,7 +156,7 @@ private:
   
   /** \brief Conversion from float to 4 bytes*/
   void float_to_IEEE_754(float position, unsigned int *output_array);
-   
+
   //Launch params
   int gripper_id_;
   std::string port_name_;
@@ -132,6 +164,8 @@ private:
 
   //Gripper state variables
   float act_position_;
+  float act_velocity_;
+  float act_current_;
   uint8_t pg70_error_;
   sensor_msgs::JointState pg70_joint_state_; 
 
@@ -145,9 +179,11 @@ private:
   static constexpr double MAX_GRIPPER_VEL_LIMIT = 83;
   static constexpr double MIN_GRIPPER_ACC_LIMIT = 0;
   static constexpr double MAX_GRIPPER_ACC_LIMIT = 320;
+  static constexpr double MIN_GRIPPER_CUR_LIMIT = 0;
+  static constexpr double MAX_GRIPPER_CUR_LIMIT = 2999;
   static constexpr double WAIT_FOR_RESPONSE_INTERVAL = 0.5;
   static constexpr double INPUT_BUFFER_SIZE = 64;
-  static constexpr int    URDF_SCALE_FACTOR = 2000;
+  static const int    URDF_SCALE_FACTOR = 2000;
     
 };  //PG70_serial
 }   //schunk_pg70

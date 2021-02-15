@@ -9,9 +9,5 @@
     <origin xyz="0 0 0" rpy="0 0 0" />
   </xacro:schunk_pg70>
 
-  <xacro:schunk_pg70 name="object" parent="base_link">
-    <origin xyz="0 0 0.2" rpy="0 0 0" />
-  </xacro:schunk_pg70>
-  
  </robot>
           

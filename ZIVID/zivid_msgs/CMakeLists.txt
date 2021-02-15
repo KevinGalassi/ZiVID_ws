@@ -23,6 +23,7 @@ add_action_files(FILES
 
 add_service_files( FILES
   newObjectName.srv
+  takeFrame.srv
 )
 
 

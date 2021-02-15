@@ -2,5 +2,22 @@
    "python.autoComplete.extraPaths": [
       "/home/kevin/ros/ZiVID_ws/devel/lib/python2.7/dist-packages",
       "/opt/ros/melodic/lib/python2.7/dist-packages"
-   ]
+   ],
+   "files.associations": {
+      "*.ipp": "cpp",
+      "*.tcc": "cpp",
+      "chrono": "cpp",
+      "exception": "cpp",
+      "fstream": "cpp",
+      "istream": "cpp",
+      "mutex": "cpp",
+      "new": "cpp",
+      "ostream": "cpp",
+      "sstream": "cpp",
+      "stdexcept": "cpp",
+      "streambuf": "cpp",
+      "regex": "cpp",
+      "type_traits": "cpp",
+      "*.txx": "cpp"
+   }
 }

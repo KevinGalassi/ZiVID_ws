@@ -7,4 +7,9 @@
       baudrate: 9600  
     </rosparam> 
 	</node>
+
+	<node name="pg70_control_position" pkg="schunk_pg70" type="pg70_control_position" output="screen">
+    <param name="current" value="10.0"/>
+	</node>
+
 </launch>
