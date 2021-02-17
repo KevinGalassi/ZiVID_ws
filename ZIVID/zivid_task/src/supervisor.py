@@ -69,7 +69,8 @@ class MainArmWaypoint(object):
 
         # Send instruction to right arm
         self.rightArmMoveWireGoal.target_pose.position = target_pose.position
-        self.rightArmMoveWireGoal.target_pose.orientation = self.rightToolOrientation
+        # self.rightArmMoveWireGoal.target_pose.orientation = self.rightToolOrientation
+        self.rightArmMoveWireGoal.target_pose.orientation = target_pose.orientation
         self.rightArmMoveWireGoal.displacement = displacement
         self.rightArmMoveWireGoal.release_height = release_height
         self.rightArmMoveWireGoal.requested_action = "Moving"
@@ -105,15 +106,17 @@ class MainArmWaypoint(object):
             displacement = Point()
 
             new_target_pose = self.newFrame_resp.target_pose
-            new_target_pose.position.z -= 0.01
+            print('target position',new_target_pose.position)
+
+            new_target_pose.position.z -= 0.02
+
             displacement = self.newFrame_resp.displacement
-            displacement.x += 0.2
-
-
-
+            
             release_height = 0.1
 
-            print('Moving')
+            print('Final target position',new_target_pose.position)
+
+
             self.move_wire(new_target_pose, displacement, release_height)
 
             print('Homing')
@@ -121,7 +124,7 @@ class MainArmWaypoint(object):
 
             print('Addio')
 
-            break
+            continue
             
     
 

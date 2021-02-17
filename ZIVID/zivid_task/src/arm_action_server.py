@@ -4,6 +4,8 @@ import rospy
 import time
 import actionlib
 import copy
+import tf
+import numpy as np
 from zivid_msgs.msg import moveWireAction, moveWireResult, moveWireFeedback
 from move_rt.msg import ExecutingTrajectoryAction, ExecutingTrajectoryGoal, ExecutingTrajectoryResult
 from move_rt.srv import *
@@ -67,12 +69,15 @@ class ArmActionServer(object):
 
 
         self.clearTraj([0])
+        self.emergencyEnable([1])
+        self.JointEnable([0])
+        self.eeEnable([0])
+        
         self.moveClientGoal = ExecutingTrajectoryGoal()
         self.moveClientGoal.ee_error_th = 0.4
         self.moveClientResult = ExecutingTrajectoryResult()
         self.joint_goal = Float64MultiArray()
-        self.home_position = [{'orient_w': -0.123, 'orient_x': 0.7, 'orient_y': 0.122, 'orient_z': 0.69, 'pos_x':  0.23347, 'pos_y': -0.35757, 'pos_z': 0.41, 'time': 5.0}]
-
+        self.traj_list = [{'orient_w': -0.123, 'orient_x': 0.7, 'orient_y': 0.122, 'orient_z': 0.69, 'pos_x':  0.23347, 'pos_y': -0.35757, 'pos_z': 0.41, 'time': 3.0}]
         self.pause_timeout = 0.5
 
 
@@ -82,8 +87,44 @@ class ArmActionServer(object):
         self.gripper_acceleration = 100
         self.setToolFrame('schunk_pg70_object_link')
         self.ArmActionServer_as.start()
+        
+        self.max_x = 0.2
+        self.max_y = 0.3
+        self.max_z = 0.18
+
+        # self.rate = rospy.Rate(rospy.get_param("hz", 30))
+
+        # self.br = tf.TransformBroadcaster()
 
         print('ArmActionServer arm Server Ready')
+
+
+    def check_limit(self):
+        if (self.traj_list[0]['pos_x'] > self.max_x) :
+            self.traj_list[0]['pos_x'] = self.max_x
+            print(' sat x')
+
+        if (self.traj_list[0]['pos_x'] < -self.max_x) :
+            self.traj_list[0]['pos_x'] = -self.max_x
+            print(' sat x')
+
+        if (self.traj_list[0]['pos_y'] > self.max_y) :
+            self.traj_list[0]['pos_y'] = self.max_y
+            print(' sat y')
+
+        if (self.traj_list[0]['pos_y'] < -self.max_y) :
+            self.traj_list[0]['pos_y'] = -self.max_y
+            print(' sat y')
+
+        if (self.traj_list[0]['pos_z'] > self.max_z) :
+            self.traj_list[0]['pos_z'] = self.max_z
+            print(' sat z')
+
+        if (self.traj_list[0]['pos_z'] < 0) :
+            self.traj_list[0]['pos_z'] = -0.005
+            print(' sat z')
+        
+        
 
 
 
@@ -101,8 +142,16 @@ class ArmActionServer(object):
             result = self.gripper_client(60, self.gripper_velocity, self.gripper_acceleration, 2000)
             
 
+            '''
+            mat2 = np.dot(mat1, t)
+
+            trans2 = tf.transformations.translation_from_matrix(mat2)
+            rot2 = tf.transformations.quaternion_from_matrix(mat2)
+            
+            br.sendTransform(trans2,  rot2, rospy.get_rostime(), "world", "target_pose")
+            '''
+
             print('Reach Starting position')
-            self.traj_list = copy.deepcopy(self.home_position)
             self.traj_list[0]['orient_w'] = goal.target_pose.orientation.w
             self.traj_list[0]['orient_x'] = goal.target_pose.orientation.x
             self.traj_list[0]['orient_y'] = goal.target_pose.orientation.y
@@ -110,6 +159,7 @@ class ArmActionServer(object):
             self.traj_list[0]['pos_x'] = goal.target_pose.position.x
             self.traj_list[0]['pos_y'] = goal.target_pose.position.y
             self.traj_list[0]['pos_z'] = goal.target_pose.position.z + self.starting_height
+            self.check_limit()
 
 
             print('sending Approaching goal to action server \n')
@@ -123,7 +173,7 @@ class ArmActionServer(object):
             result_ok = self.move_client.wait_for_result()
             print(result_ok)
 
-            time.sleep(self.pause_timeout)
+            #time.sleep(self.pause_timeout)
                         
             self.clearTraj([0])
 
@@ -132,6 +182,7 @@ class ArmActionServer(object):
             print('sending Descending goal to action server \n')
 
             self.traj_list[0]['pos_z'] = self.traj_list[0]['pos_z'] - self.starting_height
+            self.check_limit()
             self.moveClientGoal.trajectory_name = '/{}Descending'.format(self.arm)
             rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
             self.move_client.send_goal(self.moveClientGoal)
@@ -140,20 +191,18 @@ class ArmActionServer(object):
 
             # Send command to gripper
             print('Gripper Closing')
-
-            
-
             self.emergencyEnable([1])
             self.eeEnable([0])
             self.clearTraj([0])   
             result = self.gripper_client(30, self.gripper_velocity, self.gripper_acceleration, 303)
-            time.sleep(2)
+            time.sleep(3)
 
 
             # Ascending
             print('sending Ascending goal to action server')
-
+            '''
             self.traj_list[0]['pos_z'] = self.traj_list[0]['pos_z'] + self.starting_height
+            self.check_limit()
             self.moveClientGoal.trajectory_name = '/{}Ascending'.format(self.arm)
             rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
             self.emergencyEnable([0])
@@ -161,10 +210,15 @@ class ArmActionServer(object):
             self.move_client.send_goal(self.moveClientGoal)
             result_ok = self.move_client.wait_for_result()
             self.clearTraj([0])   
+            '''
 
             # Moving
+            self.emergencyEnable([0])
+            self.eeEnable([1])
             self.traj_list[0]['pos_x'] = self.traj_list[0]['pos_x'] + goal.displacement.x
             self.traj_list[0]['pos_y'] = self.traj_list[0]['pos_y'] + goal.displacement.y
+            self.traj_list[0]['pos_z'] = self.traj_list[0]['pos_z'] + self.starting_height
+            self.check_limit()
             #Sistemare orientamento con z
             self.moveClientGoal.trajectory_name = '/{}Moving'.format(self.arm)
             rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
@@ -188,9 +242,9 @@ class ArmActionServer(object):
             self.eeEnable([0])
             self.JointEnable([1])
             self.emergencyEnable([0])
-            self.joint_goal.data = [-1.57, -0.785, -1.60, -2.16, 1.57, 0.0, 10.0]
+            self.joint_goal.data = [-1.57, -0.785, -1.60, -2.16, 1.57, 0.0, 2.0]
             self.joint_pub.publish(self.joint_goal)
-            time.sleep(10)
+            time.sleep(7)
             self.JointEnable([0])
             self.emergencyEnable([1])
 
