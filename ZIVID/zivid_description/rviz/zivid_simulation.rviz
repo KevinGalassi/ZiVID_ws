@@ -7,6 +7,7 @@ Panels:
         - /Global Options1
         - /Status1
         - /TF1
+        - /TF1/Frames1
       Splitter Ratio: 0.6436090469360352
     Tree Height: 811
   - Class: rviz/Selection
@@ -395,6 +396,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          zivid_camera:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           zivid_extender:
             Alpha: 1
             Show Axes: false
@@ -502,6 +508,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          zivid_camera:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           zivid_extender:
             Alpha: 1
             Show Axes: false
@@ -542,6 +553,8 @@ Visualization Manager:
           Value: false
         left_arm/tool0:
           Value: false
+        left_arm/tool0_controller:
+          Value: false
         left_arm/upper_arm_link:
           Value: false
         left_arm/world:
@@ -552,10 +565,12 @@ Visualization Manager:
           Value: false
         left_arm/wrist_3_link:
           Value: false
+        left_arm/zivid_camera:
+          Value: false
         left_arm/zivid_extender:
-          Value: true
+          Value: false
         left_arm/zivid_flange:
-          Value: true
+          Value: false
         right_arm/base:
           Value: false
         right_arm/base_link:
@@ -582,6 +597,8 @@ Visualization Manager:
           Value: false
         right_arm/tool0:
           Value: false
+        right_arm/tool0_controller:
+          Value: false
         right_arm/upper_arm_link:
           Value: false
         right_arm/world:
@@ -594,6 +611,8 @@ Visualization Manager:
           Value: false
         world:
           Value: false
+        zivid_optical_frame:
+          Value: false
       Marker Scale: 1
       Name: TF
       Show Arrows: false
@@ -604,7 +623,8 @@ Visualization Manager:
           left_arm/world:
             left_arm/base_link:
               left_arm/base:
-                {}
+                left_arm/tool0_controller:
+                  {}
               left_arm/shoulder_link:
                 left_arm/upper_arm_link:
                   left_arm/forearm_link:
@@ -612,15 +632,18 @@ Visualization Manager:
                       left_arm/wrist_2_link:
                         left_arm/wrist_3_link:
                           left_arm/ee_link:
-                            {}
+                            zivid_optical_frame:
+                              {}
                           left_arm/tool0:
                             left_arm/zivid_flange:
                               left_arm/zivid_extender:
-                                {}
+                                left_arm/zivid_camera:
+                                  {}
           right_arm/world:
             right_arm/base_link:
               right_arm/base:
-                {}
+                right_arm/tool0_controller:
+                  {}
               right_arm/shoulder_link:
                 right_arm/upper_arm_link:
                   right_arm/forearm_link:
@@ -632,6 +655,12 @@ Visualization Manager:
                           right_arm/tool0:
                             right_arm/schunk_pg70_flange_link:
                               right_arm/schunk_pg70_base_link:
+                                right_arm/schunk_pg70_finger_left_link:
+                                  right_arm/schunk_pg70_fingertip_left_link:
+                                    {}
+                                right_arm/schunk_pg70_finger_right_link:
+                                  right_arm/schunk_pg70_fingertip_right_link:
+                                    {}
                                 right_arm/schunk_pg70_object_link:
                                   {}
       Update Interval: 0

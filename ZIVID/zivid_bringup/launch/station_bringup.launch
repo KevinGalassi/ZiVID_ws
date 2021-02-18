@@ -31,7 +31,6 @@
          <include file="$(find station_ur5_e_moveit_config)/launch/move_group.launch"/> 
       </group>
 
-        <node pkg="tf" type="static_transform_publisher" name="ur_zivid_static_tf" args=" 0.019699 0.066595 0.105907 -0.429386 0.563353 -0.559783 0.430334 left_arm/ee_link zivid_optical_frame 100" />
    
    </group>
 

@@ -11,6 +11,10 @@ from move_rt.msg import ExecutingTrajectoryAction, ExecutingTrajectoryGoal, Exec
 from move_rt.srv import *
 from std_msgs.msg import Float64MultiArray, Bool
 from schunk_pg70.srv import set_pvac
+from geometry_msgs.msg import Pose
+import moveit_commander
+import moveit_msgs.msg
+
 
 class ArmActionServer(object):
     # create messages that are used to publish feedback/result
@@ -92,6 +96,14 @@ class ArmActionServer(object):
         self.max_y = 0.3
         self.max_z = 0.18
 
+        self.target_pose = Pose()
+
+        '''
+        self.move_group = moveit_commander.MoveGroupCommander("ur5")
+        self.display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',
+                                               moveit_msgs.msg.DisplayTrajectory,
+                                               queue_size=20)
+    '''
         # self.rate = rospy.Rate(rospy.get_param("hz", 30))
 
         # self.br = tf.TransformBroadcaster()
@@ -99,37 +111,35 @@ class ArmActionServer(object):
         print('ArmActionServer arm Server Ready')
 
 
-    def check_limit(self):
-        if (self.traj_list[0]['pos_x'] > self.max_x) :
-            self.traj_list[0]['pos_x'] = self.max_x
+    def check_limit(self, check_pose):
+
+        if (check_pose.position.x > self.max_x) :
+            check_pose.position.x = self.max_x
             print(' sat x')
 
-        if (self.traj_list[0]['pos_x'] < -self.max_x) :
-            self.traj_list[0]['pos_x'] = -self.max_x
+        if (check_pose.position.x < -self.max_x) :
+            check_pose.position.x = -self.max_x
             print(' sat x')
 
-        if (self.traj_list[0]['pos_y'] > self.max_y) :
-            self.traj_list[0]['pos_y'] = self.max_y
+        if (check_pose.position.y > self.max_y) :
+            check_pose.position.y = self.max_y
             print(' sat y')
 
-        if (self.traj_list[0]['pos_y'] < -self.max_y) :
-            self.traj_list[0]['pos_y'] = -self.max_y
+        if (check_pose.position.y < -self.max_y) :
+            check_pose.position.y = -self.max_y
             print(' sat y')
 
-        if (self.traj_list[0]['pos_z'] > self.max_z) :
-            self.traj_list[0]['pos_z'] = self.max_z
+        if (check_pose.position.z > self.max_z) :
+            check_pose.position.z = self.max_z
             print(' sat z')
 
-        if (self.traj_list[0]['pos_z'] < 0) :
-            self.traj_list[0]['pos_z'] = -0.005
+        if (check_pose.position.z < 0) :
+            check_pose.position.z = -0.005
             print(' sat z')
+
+        return check_pose
         
         
-
-
-
-
-
     def execute_cb(self, goal):
 
         if goal.requested_action == 'Moving':
@@ -152,14 +162,20 @@ class ArmActionServer(object):
             '''
 
             print('Reach Starting position')
-            self.traj_list[0]['orient_w'] = goal.target_pose.orientation.w
-            self.traj_list[0]['orient_x'] = goal.target_pose.orientation.x
-            self.traj_list[0]['orient_y'] = goal.target_pose.orientation.y
-            self.traj_list[0]['orient_z'] = goal.target_pose.orientation.z
-            self.traj_list[0]['pos_x'] = goal.target_pose.position.x
-            self.traj_list[0]['pos_y'] = goal.target_pose.position.y
-            self.traj_list[0]['pos_z'] = goal.target_pose.position.z + self.starting_height
-            self.check_limit()
+
+             
+            self.target_pose = copy.deepcopy(goal.pick_pose)
+            self.target_pose.position.z += self.starting_height
+            self.target_pose = self.check_limit(self.target_pose)
+
+            self.traj_list[0]['orient_w'] = self.target_pose.orientation.w
+            self.traj_list[0]['orient_x'] = self.target_pose.orientation.x
+            self.traj_list[0]['orient_y'] = self.target_pose.orientation.y
+            self.traj_list[0]['orient_z'] = self.target_pose.orientation.z
+            self.traj_list[0]['pos_x'] = self.target_pose.position.x
+            self.traj_list[0]['pos_y'] = self.target_pose.position.y
+            self.traj_list[0]['pos_z'] = self.target_pose.position.z
+            print('Target pose z: ', self.target_pose.position.z)
 
 
             print('sending Approaching goal to action server \n')
@@ -181,8 +197,18 @@ class ArmActionServer(object):
 
             print('sending Descending goal to action server \n')
 
-            self.traj_list[0]['pos_z'] = self.traj_list[0]['pos_z'] - self.starting_height
-            self.check_limit()
+            self.target_pose  = copy.deepcopy(goal.pick_pose)
+            self.target_pose = self.check_limit(self.target_pose)
+            self.traj_list[0]['orient_w'] = self.target_pose.orientation.w
+            self.traj_list[0]['orient_x'] = self.target_pose.orientation.x
+            self.traj_list[0]['orient_y'] = self.target_pose.orientation.y
+            self.traj_list[0]['orient_z'] = self.target_pose.orientation.z
+            self.traj_list[0]['pos_x'] = self.target_pose.position.x
+            self.traj_list[0]['pos_y'] = self.target_pose.position.y
+            self.traj_list[0]['pos_z'] = self.target_pose.position.z
+
+            print('Target pose z: ', self.target_pose.position.z)
+
             self.moveClientGoal.trajectory_name = '/{}Descending'.format(self.arm)
             rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
             self.move_client.send_goal(self.moveClientGoal)
@@ -200,6 +226,7 @@ class ArmActionServer(object):
 
             # Ascending
             print('sending Ascending goal to action server')
+
             '''
             self.traj_list[0]['pos_z'] = self.traj_list[0]['pos_z'] + self.starting_height
             self.check_limit()
@@ -215,10 +242,19 @@ class ArmActionServer(object):
             # Moving
             self.emergencyEnable([0])
             self.eeEnable([1])
-            self.traj_list[0]['pos_x'] = self.traj_list[0]['pos_x'] + goal.displacement.x
-            self.traj_list[0]['pos_y'] = self.traj_list[0]['pos_y'] + goal.displacement.y
-            self.traj_list[0]['pos_z'] = self.traj_list[0]['pos_z'] + self.starting_height
-            self.check_limit()
+
+            self.target_pose = copy.deepcopy(goal.place_pose)
+            self.target_pose = self.check_limit(goal.place_pose)
+            self.traj_list[0]['orient_w'] = self.target_pose.orientation.w
+            self.traj_list[0]['orient_x'] = self.target_pose.orientation.x
+            self.traj_list[0]['orient_y'] = self.target_pose.orientation.y
+            self.traj_list[0]['orient_z'] = self.target_pose.orientation.z
+            self.traj_list[0]['pos_x'] = self.target_pose.position.x
+            self.traj_list[0]['pos_y'] = self.target_pose.position.y
+            self.traj_list[0]['pos_z'] = self.target_pose.position.z
+
+
+
             #Sistemare orientamento con z
             self.moveClientGoal.trajectory_name = '/{}Moving'.format(self.arm)
             rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
@@ -239,17 +275,45 @@ class ArmActionServer(object):
 
 
         if goal.requested_action == 'Homing':
+            
+            '''
+            
+            self.eeEnable([0])
+            self.JointEnable([1])
+            self.emergencyEnable([0])
+
+
+            joint_goal = move_group.get_current_joint_value()
+            joint_goal[0] = -pi/2
+            joint_goal[1] = -pi/4
+            joint_goal[2] = -pi/2
+            joint_goal[3] = -pi/2
+            joint_goal[4] = -2*pi/3
+            joint_goal[5] = pi
+            joint_goal[6] = 0.0
+
+
+            self.move_group.go(joint_goal, wait=True)
+            self.move_group.stop()
+
+            self.JointEnable([0])
+            self.emergencyEnable([1])
+            
+            
+            '''
+            
+            
             self.eeEnable([0])
             self.JointEnable([1])
             self.emergencyEnable([0])
             self.joint_goal.data = [-1.57, -0.785, -1.60, -2.16, 1.57, 0.0, 2.0]
             self.joint_pub.publish(self.joint_goal)
-            time.sleep(7)
+            time.sleep(4)
             self.JointEnable([0])
             self.emergencyEnable([1])
 
             print('Arm Home\n')
-
+            
 
         self.ArmActionServer_as_result.success = True
         self.ArmActionServer_as.set_succeeded(self.ArmActionServer_as_result)

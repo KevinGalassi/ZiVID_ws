@@ -65,13 +65,11 @@ class MainArmWaypoint(object):
 
 
 
-    def move_wire(self, target_pose, displacement, release_height):                        
+    def move_wire(self, new_pick_pose, new_place_pose, release_height):                        
 
         # Send instruction to right arm
-        self.rightArmMoveWireGoal.target_pose.position = target_pose.position
-        # self.rightArmMoveWireGoal.target_pose.orientation = self.rightToolOrientation
-        self.rightArmMoveWireGoal.target_pose.orientation = target_pose.orientation
-        self.rightArmMoveWireGoal.displacement = displacement
+        self.rightArmMoveWireGoal.pick_pose = new_pick_pose
+        self.rightArmMoveWireGoal.place_pose = new_place_pose
         self.rightArmMoveWireGoal.release_height = release_height
         self.rightArmMoveWireGoal.requested_action = "Moving"
 
@@ -102,22 +100,25 @@ class MainArmWaypoint(object):
             print('Call ZiVID Service')
             self.newFrame_resp = self.takeFrame_srv()
 
-            new_target_pose = Pose()
-            displacement = Point()
+            pick_pose = Pose()
+            place_pose = Pose()
 
-            new_target_pose = self.newFrame_resp.target_pose
-            print('target position',new_target_pose.position)
 
-            new_target_pose.position.z -= 0.02
+            pick_pose = self.newFrame_resp.pick_pose
+            pick_pose.position.z -= 0.02
+            place_pose = self.newFrame_resp.place_pose
 
-            displacement = self.newFrame_resp.displacement
+            print('target position \n',pick_pose.position)
+
+            #pick_pose.position.z -= 0.02
+
             
             release_height = 0.1
 
-            print('Final target position',new_target_pose.position)
+            #print('Final target position', pick_pose.position)
 
 
-            self.move_wire(new_target_pose, displacement, release_height)
+            self.move_wire(pick_pose, place_pose, release_height)
 
             print('Homing')
             self.move_homing()
