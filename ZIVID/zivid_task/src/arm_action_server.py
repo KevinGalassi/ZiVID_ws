@@ -175,6 +175,7 @@ class ArmActionServer(object):
             self.traj_list[0]['pos_x'] = self.target_pose.position.x
             self.traj_list[0]['pos_y'] = self.target_pose.position.y
             self.traj_list[0]['pos_z'] = self.target_pose.position.z
+            self.traj_list[0]['time'] = 2.0
             print('Target pose z: ', self.target_pose.position.z)
 
 
@@ -206,8 +207,7 @@ class ArmActionServer(object):
             self.traj_list[0]['pos_x'] = self.target_pose.position.x
             self.traj_list[0]['pos_y'] = self.target_pose.position.y
             self.traj_list[0]['pos_z'] = self.target_pose.position.z
-
-            print('Target pose z: ', self.target_pose.position.z)
+            self.traj_list[0]['time'] = 2.0
 
             self.moveClientGoal.trajectory_name = '/{}Descending'.format(self.arm)
             rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
@@ -227,21 +227,27 @@ class ArmActionServer(object):
             # Ascending
             print('sending Ascending goal to action server')
 
-            '''
-            self.traj_list[0]['pos_z'] = self.traj_list[0]['pos_z'] + self.starting_height
-            self.check_limit()
-            self.moveClientGoal.trajectory_name = '/{}Ascending'.format(self.arm)
-            rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
             self.emergencyEnable([0])
             self.eeEnable([1])
+            self.target_pose  = copy.deepcopy(goal.pick_pose)
+            self.target_pose = self.check_limit(self.target_pose)
+            self.traj_list[0]['orient_w'] = self.target_pose.orientation.w
+            self.traj_list[0]['orient_x'] = self.target_pose.orientation.x
+            self.traj_list[0]['orient_y'] = self.target_pose.orientation.y
+            self.traj_list[0]['orient_z'] = self.target_pose.orientation.z
+            self.traj_list[0]['pos_x'] = self.target_pose.position.x
+            self.traj_list[0]['pos_y'] = self.target_pose.position.y
+            self.traj_list[0]['pos_z'] = goal.place_pose.position.z + goal.release_height
+            self.traj_list[0]['time'] = 2.0
+
+            self.moveClientGoal.trajectory_name = '/{}Descending'.format(self.arm)
+            rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
             self.move_client.send_goal(self.moveClientGoal)
-            result_ok = self.move_client.wait_for_result()
-            self.clearTraj([0])   
-            '''
+            self.move_client.wait_for_result()
+            self.moveClientResult = self.move_client.get_result()  
 
             # Moving
-            self.emergencyEnable([0])
-            self.eeEnable([1])
+
 
             self.target_pose = copy.deepcopy(goal.place_pose)
             self.target_pose = self.check_limit(goal.place_pose)
@@ -251,9 +257,8 @@ class ArmActionServer(object):
             self.traj_list[0]['orient_z'] = self.target_pose.orientation.z
             self.traj_list[0]['pos_x'] = self.target_pose.position.x
             self.traj_list[0]['pos_y'] = self.target_pose.position.y
-            self.traj_list[0]['pos_z'] = self.target_pose.position.z
-
-
+            self.traj_list[0]['pos_z'] = self.target_pose.position.z + goal.release_height
+            self.traj_list[0]['time'] = 2.0
 
             #Sistemare orientamento con z
             self.moveClientGoal.trajectory_name = '/{}Moving'.format(self.arm)
@@ -265,14 +270,46 @@ class ArmActionServer(object):
             self.clearTraj([0])   
 
 
+
+            
+            self.target_pose = copy.deepcopy(goal.place_pose)
+            self.target_pose = self.check_limit(goal.place_pose)
+            self.traj_list[0]['orient_w'] = self.target_pose.orientation.w
+            self.traj_list[0]['orient_x'] = self.target_pose.orientation.x
+            self.traj_list[0]['orient_y'] = self.target_pose.orientation.y
+            self.traj_list[0]['orient_z'] = self.target_pose.orientation.z
+            self.traj_list[0]['pos_x'] = self.target_pose.position.x
+            self.traj_list[0]['pos_y'] = self.target_pose.position.y
+            self.traj_list[0]['pos_z'] = self.target_pose.position.z
+            self.traj_list[0]['time'] = 2.0
+
+            #Sistemare orientamento con z
+            self.moveClientGoal.trajectory_name = '/{}Moving'.format(self.arm)
+            rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
+
+            print('Sending moving goal')
+            self.move_client.send_goal(self.moveClientGoal)
+            result_ok = self.move_client.wait_for_result()
+            self.clearTraj([0])   
+            
+
             # Release
 
-            self.clearTraj([0])
-            self.emergencyEnable([1])
-            self.eeEnable([0])
             print('Gripper Opening')
             result = self.gripper_client(60, self.gripper_velocity, self.gripper_acceleration, 2000)
+            time.sleep(1.5)
 
+            self.traj_list[0]['pos_z'] += 0.015
+            self.traj_list[0]['time'] = 2.0
+            self.moveClientGoal.trajectory_name = '/{}Ascending'.format(self.arm)
+            rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
+
+            print('Sending Pre-Homing')
+            self.move_client.send_goal(self.moveClientGoal)
+            result_ok = self.move_client.wait_for_result()
+            self.clearTraj([0])   
+            self.emergencyEnable([1])
+            self.eeEnable([0])
 
         if goal.requested_action == 'Homing':
             

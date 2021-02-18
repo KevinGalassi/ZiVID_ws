@@ -41,6 +41,7 @@ class MainArmWaypoint(object):
         self.rightArmMoveWireGoal = moveWireGoal()
         self.newFrame_resp = takeFrameResponse()
 
+        self.release_height = 0.05
 
 
         self.rightToolOrientation = Quaternion()
@@ -112,13 +113,10 @@ class MainArmWaypoint(object):
 
             #pick_pose.position.z -= 0.02
 
-            
-            release_height = 0.1
-
             #print('Final target position', pick_pose.position)
 
 
-            self.move_wire(pick_pose, place_pose, release_height)
+            self.move_wire(pick_pose, place_pose, self.release_height)
 
             print('Homing')
             self.move_homing()
