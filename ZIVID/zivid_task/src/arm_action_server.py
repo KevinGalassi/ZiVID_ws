@@ -310,6 +310,7 @@ class ArmActionServer(object):
             self.clearTraj([0])   
             self.emergencyEnable([1])
             self.eeEnable([0])
+            
 
         if goal.requested_action == 'Homing':
             

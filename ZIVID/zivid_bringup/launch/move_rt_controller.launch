@@ -17,8 +17,8 @@
    <arg name="left_Z" default="0.0"/>  
    <arg name="left_tool" default="true"/>
     
-   <arg name="left_active" value="false"/>
-   <arg name="right_active" value="true"/>
+   <arg name="left_active" value="true"/>
+   <arg name="right_active" value="false"/>
 
 
 

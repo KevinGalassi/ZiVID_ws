@@ -13,8 +13,10 @@
     <arg name="left_Y"     default="0.0"/>  
 
 
-    <node name="supervisor_sys"     pkg="zivid_task" type="supervisor.py"      args="right_arm/" output="screen" />
-    <node name="ArmActionServer"    pkg="zivid_task" type="arm_action_server.py"   args="right_arm/"  output="screen" required="true"/>
+    <!-- <node name="supervisor_sys"     pkg="zivid_task" type="supervisor.py"      args="right_arm/" output="screen" />
+    <node name="ArmActionServer"    pkg="zivid_task" type="arm_action_server.py"   args="right_arm/"  output="screen" required="true"/> -->
 
+    <node name="supervisor_sys"     pkg="zivid_task" type="camera_aquisition.py"      args="left_arm/" output="screen" />
+    <node name="ArmActionServer"    pkg="zivid_task" type="camera_action_server.py"   args="left_arm/"  output="screen" required="true"/>
 
 </launch>

@@ -18,12 +18,15 @@ find_package(catkin REQUIRED
 )
 
 add_action_files(FILES
+  cameraAquisition.action
 	moveWire.action
 )
 
 add_service_files( FILES
   newObjectName.srv
   takeFrame.srv
+  newPoseArray.srv
+  CameraSampleDataset.srv
 )
 
 
