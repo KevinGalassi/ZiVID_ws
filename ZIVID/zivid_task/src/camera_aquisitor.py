@@ -34,15 +34,10 @@ class MainArmWaypoint(object):
 
    
       print('Left Arm Camera Server Action Client: Waiting')
-      self.left_arm_client = actionlib.SimpleActionClient('left_arm/CameraActionServer', cameraAquisitionAction)
+      self.left_arm_client = actionlib.SimpleActionClient('/left_arm/CameraActionServer', cameraAquisitionAction)
       self.left_arm_client.wait_for_server()
       print('Left Arm Camera Server Action Client: OK\n')
 
-
-      print('Take Camera service')
-      rospy.wait_for_service('take_frame_service')
-      self.takeFrame_srv = rospy.ServiceProxy('take_frame_service', takeFrame)
-      print('Camera Service Service OK')
 
       # Servizio per nuovi punti
       print('New Pose Service: Waiting')
@@ -54,18 +49,8 @@ class MainArmWaypoint(object):
       self.newPoseArray_resp = newPoseArrayResponse()      
       
       self.file_name = String()
-      self.file_name.data = "prova"
+      self.file_name.data = "robot_poses.txt"
 
-      self.rightToolOrientation = Quaternion()
-      self.rightToolOrientation.w = 0.0
-      self.rightToolOrientation.x = 0.707
-      self.rightToolOrientation.y = -0.707
-      self.rightToolOrientation.z = 0.0
-
-
-      traj_home = [{'orient_w': 0.0, 'orient_x': 0.707, 'orient_y': 0.0, 'orient_z':  0.707, 'pos_x': -0.10931, 'pos_y': +0.38207, 'pos_z': 0.41, 'time': 5.0}]
-      
-      rospy.set_param('/{}traj_home'.format(self.arm), traj_home)
 
       print('Supervisor Ready')
 
@@ -84,10 +69,13 @@ class MainArmWaypoint(object):
 
          print('Sending Pose to Action Server')
 
-         self.cameraGoal.pose_sequence = self.NewPoseArray_resp.array
-         self.left_arm_client.send_goal(self.cameraGoal)
+         self.cameraGoal.goal.pose_sequence = self.NewPoseArray_resp.array
+         
+         self.left_arm_client.send_goal(self.cameraGoal.goal)
+
+
          result = self.left_arm_client.wait_for_result()
-         print('Camera concluded, result : ' result)
+         print('Camera concluded, result : ', result)
 
          print('Ciao')
 

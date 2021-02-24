@@ -19,7 +19,7 @@ ordered_joints: [shoulder_pan_joint, shoulder_lift_joint, elbow_joint, wrist_1_j
 
 dqMinimizer: {m: 6, K: [1, 1, 1, 1, 1, 1]}
 JointLimiter: {m: 12, xm: [6, -6, 6, -6, 6, -6, 6, -6, 6, -6, 6, -6], b: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], K: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]}
-EePosition: {base_link: world, ee_link: fingers, tf_prefix: left_arm, group: manipulator, m: 6, K: [2, 2, 2, 0.05, 0.05, 0.05]}
+EePosition: {base_link: world, ee_link: ee_link, tf_prefix: left_arm_simu, group: manipulator, m: 6, K: [2, 2, 2, 0.05, 0.05, 0.05]}
 JointPosition: {m: 6, K: [0.1, 0.1, 0.1, 0.01, 0.01, 0.01]}
 EmergencyStop: {m: 6, K: [5, 5, 5, 5, 5, 5]}
 singularityavoidance: {m: 1, xm: [0.1], b: [0.2], K: [1]}

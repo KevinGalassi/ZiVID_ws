@@ -12,11 +12,20 @@
     <arg name="left_z"     default="0.001"/>     
     <arg name="left_Y"     default="0.0"/>  
 
+    <arg name="grasp"   default="true"/>
+    <arg name="camera" default="false"/>
 
-    <!-- <node name="supervisor_sys"     pkg="zivid_task" type="supervisor.py"      args="right_arm/" output="screen" />
-    <node name="ArmActionServer"    pkg="zivid_task" type="arm_action_server.py"   args="right_arm/"  output="screen" required="true"/> -->
 
-    <node name="supervisor_sys"     pkg="zivid_task" type="camera_aquisition.py"      args="left_arm/" output="screen" />
-    <node name="ArmActionServer"    pkg="zivid_task" type="camera_action_server.py"   args="left_arm/"  output="screen" required="true"/>
+    <group if="$(arg grasp)" >
+        <node name="supervisor_sys"     pkg="zivid_task" type="supervisor.py"      args="right_arm/" output="screen" />
+        <node name="ArmActionServer"    pkg="zivid_task" type="arm_action_server.py"   args="right_arm/"  output="screen" required="true"/>
+    </group>
+
+
+    <group if="$(arg camera)" >
+        <node name="supervisor_sys"     pkg="zivid_task" type="camera_aquisitor.py"      args="left_arm/" output="screen" />
+        <node name="CameraActionServer"    pkg="zivid_task" type="camera_action_server.py"   args="left_arm/"  output="screen" required="true"/>
+    </group>
+
 
 </launch>

@@ -18,6 +18,8 @@
       "streambuf": "cpp",
       "regex": "cpp",
       "type_traits": "cpp",
-      "*.txx": "cpp"
+      "*.txx": "cpp",
+      "unordered_map": "cpp",
+      "unordered_set": "cpp"
    }
 }

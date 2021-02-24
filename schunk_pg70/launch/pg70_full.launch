@@ -12,4 +12,21 @@
     <param name="current" value="10.0"/>
 	</node>
 
+
+  
+  <group ns="schunk_pg70" >
+  <node name="Grasp" pkg="schunk_pg70" type="pg70_action_server" output="screen" >
+   <rosparam>
+      gripper_id: 12
+      portname: /dev/ttyUSB0
+      baudrate: 9600  
+   </rosparam> 
+
+   <param name="current" value="10.0"/>
+	</node>
+</group>
+
+
+
+
 </launch>

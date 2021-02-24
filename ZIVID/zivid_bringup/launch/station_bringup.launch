@@ -2,7 +2,7 @@
 <launch>
 
    <arg name="left_active" value="true"/>
-   <arg name="right_active" value="false"/>
+   <arg name="right_active" value="true"/>
 
    <arg name="limited" default="true"/>
    <arg name="paused" default="true"/>
@@ -30,9 +30,8 @@
          <node pkg="tf" type="static_transform_publisher" name="$(arg left_ns)_broadcaster" args="0 0 0 0 0 0 world $(arg left_ns)/world 100" />
          <include file="$(find station_ur5_e_moveit_config)/launch/move_group.launch"/> 
       </group>
-
-   
    </group>
+
 
    <group if="$(arg right_active)" >
 

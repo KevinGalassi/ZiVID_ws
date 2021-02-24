@@ -29,10 +29,13 @@ class CameraActionServer(object):
    def __init__(self, name, robot = ''):
       #definition of action server, services and action clients
       self.CameraActionServer_as_name = robot[:-1] + name
+      print( self.CameraActionServer_as_name)
       self.CameraActionServer_as = actionlib.SimpleActionServer(self.CameraActionServer_as_name, cameraAquisitionAction, execute_cb=self.execute_cb, auto_start = False)
       
       self.arm = robot
       self.active = True
+
+      print(self.arm)
 
       print('trajectory execution Action Client: Waiting')
       self.move_client = actionlib.SimpleActionClient('{}ee_execute_trajectory'.format(self.arm), ExecutingTrajectoryAction)
@@ -115,9 +118,34 @@ class CameraActionServer(object):
       self.clearTraj([0])
       self.emergencyEnable([1])
 
-      self.setToolFrame('{}ee_link'.format(self.arm))
+      self.setToolFrame('ee_link')
 
-      for i in range goal.pose_sequence.poses:
+      print('{}ee_link'.format(self.arm))
+
+      self.target_pose = copy.deepcopy(goal.pose_sequence.poses[0])
+
+      self.traj_list[0]['orient_w'] = self.target_pose.orientation.w
+      self.traj_list[0]['orient_x'] = self.target_pose.orientation.x
+      self.traj_list[0]['orient_y'] = self.target_pose.orientation.y
+      self.traj_list[0]['orient_z'] = self.target_pose.orientation.z
+      self.traj_list[0]['pos_x'] = self.target_pose.position.x
+      self.traj_list[0]['pos_y'] = self.target_pose.position.y
+      self.traj_list[0]['pos_z'] = self.target_pose.position.z
+      self.traj_list[0]['time'] = 10.0
+
+      self.eeEnable([1])
+      self.emergencyEnable([0])
+
+      self.moveClientGoal.trajectory_name = '/{}move_to_target'.format(self.arm)
+      rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
+      
+      self.move_client.send_goal(self.moveClientGoal)
+      result_ok = self.move_client.wait_for_result()
+      print(result_ok)
+
+
+
+      for i in range( len(goal.pose_sequence.poses) ):
          
          print('Move to pose: ', i)
          print(goal.pose_sequence.poses[i])
@@ -131,10 +159,10 @@ class CameraActionServer(object):
          self.traj_list[0]['pos_x'] = self.target_pose.position.x
          self.traj_list[0]['pos_y'] = self.target_pose.position.y
          self.traj_list[0]['pos_z'] = self.target_pose.position.z
-         self.traj_list[0]['time'] = 5.0
+         self.traj_list[0]['time'] = 1.0
 
-         self.emergencyEnable([0])
          self.eeEnable([1])
+         self.emergencyEnable([0])
 
          self.moveClientGoal.trajectory_name = '/{}move_to_target'.format(self.arm)
          rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
@@ -146,20 +174,20 @@ class CameraActionServer(object):
          self.emergencyEnable([1])
          self.eeEnable([0])
          self.clearTraj([1])
-
+         
          counter = 0
 
          while(counter < 3) : 
-            self.camera_res = self.camera_client([])
+            self.camera_res = self.camera_client()
             
             if (self.camera_res.result.data):
                break
 
             counter = counter + 1
 
-         if counter >= 3
+         if counter >= 3 :
             print('Camera Not WORKING')
-
+         
                
 
       self.CameraActionServer_as_result.success = True

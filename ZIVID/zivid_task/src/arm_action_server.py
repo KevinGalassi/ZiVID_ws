@@ -78,14 +78,14 @@ class ArmActionServer(object):
         self.eeEnable([0])
         
         self.moveClientGoal = ExecutingTrajectoryGoal()
-        self.moveClientGoal.ee_error_th = 0.4
+        self.moveClientGoal.ee_error_th = 0.01
         self.moveClientResult = ExecutingTrajectoryResult()
         self.joint_goal = Float64MultiArray()
         self.traj_list = [{'orient_w': -0.123, 'orient_x': 0.7, 'orient_y': 0.122, 'orient_z': 0.69, 'pos_x':  0.23347, 'pos_y': -0.35757, 'pos_z': 0.41, 'time': 3.0}]
         self.pause_timeout = 0.5
 
 
-        self.starting_height = 0.10
+        self.starting_height = 0.05
         
         self.gripper_velocity = 50
         self.gripper_acceleration = 100
@@ -133,8 +133,8 @@ class ArmActionServer(object):
             check_pose.position.z = self.max_z
             print(' sat z')
 
-        if (check_pose.position.z < 0) :
-            check_pose.position.z = -0.005
+        if (check_pose.position.z < 0.025) :
+            check_pose.position.z = 0.025
             print(' sat z')
 
         return check_pose
@@ -207,7 +207,7 @@ class ArmActionServer(object):
             self.traj_list[0]['pos_x'] = self.target_pose.position.x
             self.traj_list[0]['pos_y'] = self.target_pose.position.y
             self.traj_list[0]['pos_z'] = self.target_pose.position.z
-            self.traj_list[0]['time'] = 2.0
+            self.traj_list[0]['time'] = 3.0
 
             self.moveClientGoal.trajectory_name = '/{}Descending'.format(self.arm)
             rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)

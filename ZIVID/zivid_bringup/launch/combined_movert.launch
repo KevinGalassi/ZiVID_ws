@@ -5,20 +5,19 @@
    <arg name="gui" default="true"/>
    <arg name="scene_file" default="$(find zivid_description)/scene/table.scene"/> 
 
-   <arg name="right_ns" default="right_arm"/>
-   <arg name="right_y" default="0.470"/>    
-   <arg name="right_z" default="0.01"/>
-   <arg name="right_Z" default="3.14"/>  
-   <arg name="right_tool" default="'true'"/>
+
     
    <arg name="left_ns" default="left_arm"/>
+   <arg name="left_simu_ns" default="left_arm_simu"/>
+
+
    <arg name="left_y" default="-0.470"/>
    <arg name="left_z" default="0.001"/>     
    <arg name="left_Z" default="0.0"/>  
    <arg name="left_tool" default="true"/>
     
-   <arg name="left_active" value="false"/>
-   <arg name="right_active" value="true"/>
+   <arg name="left_active" value="true"/>
+   <arg name="right_active" value="false"/>
 
 
 
@@ -30,12 +29,14 @@
 	   </group>    
    </group>
 
-   <group if="$(arg right_active)">
-	   <group ns="$(arg right_ns)">        
-		   <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find zivid_description)/xacro/ur5_robot.urdf.xacro' ns:=$(arg right_ns) y:=$(arg right_y) z:=$(arg right_z) Z:=$(arg right_Z)" />
-         <rosparam file="$(find zivid_bringup)/config/right_arm.yaml" command="load"/>
-		   <node pkg="move_rt" type="move_rt_node" name="move_rt" launch-prefix="xterm -e gdb -ex=run --args"/>
-	   </group>
-   </group>
+   <group ns="$(arg left_simu_ns)">        
+      <rosparam file="$(find move_rt)/controllers/arm_controller_ur5.yaml" command="load"/> 
+      <node name="arm_velocity_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_velocity_controller" respawn="false" output="screen"/>
+      <rosparam file="$(find zivid_simulation)/config/p2p_left_arm_simu.yaml" command="load"/>
+      <node pkg="move_rt" type="move_rt_node" name="move_rt_left" output="screen" />
+   </group>  
+
+   <node pkg="rosservice" type="rosservice" name="start_sim" args="call --wait /gazebo/unpause_physics" />
+
 
 </launch>
