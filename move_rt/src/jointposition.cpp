@@ -25,7 +25,10 @@ JointPosition::JointPosition(ros::NodeHandle &n,
     : action_server_(n, "follow_joint_trajectory",
                      boost::bind(&JointPosition::goalCB, this, _1),
                      boost::bind(&JointPosition::cancelCB, this, _1), false),
-      has_active_goal_(false), PriorityLevel(n), q(_q),
+     JS_action_server_(n, "simple_joint_trajectory",
+                     boost::bind(&JointPosition::JS_goalCB, this, _1),
+                     boost::bind(&JointPosition::JS_cancelCB, this, _1), false),
+       has_active_goal_(false), JS_has_active_goal_(false), PriorityLevel(n), q(_q),
       joint_state_(joint_state) {
   using namespace XmlRpc;
 
@@ -128,6 +131,14 @@ JointPosition::JointPosition(ros::NodeHandle &n,
 
   ROS_DEBUG_STREAM("JointPosition::JointPosition: action server started");
 
+  ROS_DEBUG_STREAM("JointPosition::JointPosition: Activating Joint Simple Trajectory Action Server");
+
+  JS_action_server_.start();
+
+  traj_length = 0;
+  
+  ROS_DEBUG_STREAM("JointPosition::JointPosition: Joint Simple Trajectory Action Server started");
+  
   JK.setIdentity();
 
   A.setZero();
@@ -135,6 +146,8 @@ JointPosition::JointPosition(ros::NodeHandle &n,
   trajectory_controller_state.joint_names = joint_names_;
 
   trajectory_index = 0;
+  
+  q_err.resize(m, 1);
 
   trajectory_controller_state.desired.positions.resize(m);
   trajectory_controller_state.desired.velocities.resize(m);
@@ -209,6 +222,8 @@ void JointPosition::goalCB(GoalHandle gh) {
     trajectory_msgs::JointTrajectory empty;
     empty.joint_names = joint_names_;
 
+    current_traj_ = empty;
+    
     // Marks the current goal as canceled.
     active_goal_.setCanceled();
     has_active_goal_ = false;
@@ -234,11 +249,15 @@ void JointPosition::cancelCB(GoalHandle gh) {
     // Stops the controller.
     trajectory_msgs::JointTrajectory empty;
     empty.joint_names = joint_names_;
-
+    
+    current_traj_ = empty;
+    
     // Marks the current goal as canceled.
     active_goal_.setCanceled();
     has_active_goal_ = false;
     trajectory_index = 0;
+
+    traj_length = 0;
   }
 }
 
@@ -315,6 +334,119 @@ void JointPosition::controllerStateCB(
   }
 }
 
+void JointPosition::JS_goalCB(JS_GoalHandle gh) {
+
+  ROS_INFO("JointPosition::JS_goalCB: goal received");
+
+  // Ensures that the joints in the goal match the joints we are commanding.
+  if (gh.getGoal()->trajectory_name.length() == 0) {
+    ROS_ERROR("JointPosition::JS_goalCB: No trajectory points specified");
+    gh.setRejected();
+    return;
+  }
+
+  gh.setAccepted();
+  JS_active_goal_ = gh;
+  JS_has_active_goal_ = true;
+
+  if (!_nodehandle.hasParam(JS_active_goal_.getGoal()->trajectory_name)) {
+    ROS_INFO_STREAM("JointPosition::JS_goalCB: trajectory "
+                    << JS_active_goal_.getGoal()->trajectory_name
+                    << " does not exist in parameter server");
+    return;
+  } else {
+
+    XmlRpc::XmlRpcValue waypoints_vector;
+
+    _nodehandle.getParam(JS_active_goal_.getGoal()->trajectory_name,
+                         waypoints_vector);
+
+    if (waypoints_vector.getType() == XmlRpc::XmlRpcValue::Type::TypeArray &&
+        waypoints_vector.size() > 0) {
+      ROS_INFO_STREAM("JointPosition::JS_goalCB: trajectory "
+                      << JS_active_goal_.getGoal()->trajectory_name
+                      << " loaded with " << waypoints_vector.size()
+                      << " points");
+      // waypoints_vector[0] is a 'TypeArray' aka vector
+    } else {
+      ROS_INFO("JointPosition::JS_goalCB: trajectory is empty");
+      return;
+    }
+
+    boost::shared_ptr<std_msgs::Float64MultiArray> trajectory_point(
+        new std_msgs::Float64MultiArray());
+
+    trajectory_point->layout.dim.push_back(
+        std_msgs::MultiArrayDimension()); // one structure MultiArrayDimension
+                                          // per dimension
+    trajectory_point->layout.data_offset = 0;
+    trajectory_point->layout.dim[0].label = "";
+    trajectory_point->layout.dim[0].size = m + 1;
+    trajectory_point->layout.dim[0].stride = 0;
+
+    std::vector<std::string> fields;
+    
+    for (int i = 0; i < m; i++) fields.push_back("joint_" + std::to_string(i+1));
+    
+    fields.push_back("time");
+
+    for (int i = 0; i < waypoints_vector.size(); i++) {
+      trajectory_point->data.clear();
+
+      if (waypoints_vector[i].getType() ==
+          XmlRpc::XmlRpcValue::Type::TypeStruct) {
+        for (int j = 0; j < fields.size(); j++) {
+          if (waypoints_vector[i].hasMember(fields[j])) {
+            trajectory_point->data.push_back(
+                double(waypoints_vector[i][fields[j]]));
+          } else {
+            ROS_INFO(
+                "JointPosition::JS_goalCB: trajectory waypoint[%d] has no member %s",
+                i, fields[j].c_str());
+            return;
+          }
+        }
+      } else {
+        ROS_INFO(
+            "JointPosition::JS_goalCB: trajectory waypoint[%d] type is not a Struct",
+            i);
+        return;
+      }
+
+      callbackJointSetpoint(trajectory_point);
+    }
+
+    trajectory_start = ros::Time::now();
+
+    trajectory_index = 0;
+    
+    ROS_INFO("JointPosition::JS_goalCB: trajectory is sent");    
+  }
+}
+
+
+void JointPosition::JS_cancelCB(JS_GoalHandle gh) {
+
+  ROS_INFO("JointPosition::JS_cancelCB: cancellation request received");
+
+  // Cancels the currently active goal.
+  if (JS_has_active_goal_) {
+    // clear the trajectory.
+    //clear_traj_points();
+    trajectory_msgs::JointTrajectory empty;
+    empty.joint_names = joint_names_;
+    
+    current_traj_ = empty;
+    
+    traj_length = 0;
+    
+    // Marks the current goal as canceled.
+    result_.error_code = result_.INVALID_GOAL;
+    JS_active_goal_.setCanceled(result_);
+    JS_has_active_goal_ = false;
+  }
+}
+
 void JointPosition::updateConstraints() {
   ros::Time now = ros::Time::now();
   ros::Time end_time = now;
@@ -348,7 +480,7 @@ void JointPosition::updateConstraints() {
 
   if (now < end_time) {
 
-   // if (has_active_goal_) {
+   // if (has_active_goal_ || JS_has_active_goal_) {
       for (int i = trajectory_index; i <= last; ++i) {
         /* code */
         if (now <= trajectory_start + current_traj_.points[i].time_from_start) {
@@ -403,6 +535,9 @@ void JointPosition::updateConstraints() {
     trajectory_controller_state.error.positions[i] =
         trajectory_controller_state.desired.positions[i] -
         trajectory_controller_state.actual.positions[i];
+    
+    q_err(i,0) = trajectory_controller_state.error.positions[i];
+        
     trajectory_controller_state.error.velocities[i] =
         trajectory_controller_state.desired.velocities[i] -
         trajectory_controller_state.actual.velocities[i];
@@ -412,6 +547,25 @@ void JointPosition::updateConstraints() {
   }
 
   pub_controller_state.publish(trajectory_controller_state);
+  
+  if (JS_has_active_goal_) {
+    feedback_.percent_complete =
+        ((double)trajectory_index / (double)traj_length) * 100;
+    JS_active_goal_.publishFeedback(feedback_);
+
+    if (trajectory_index == traj_length - 1) {
+
+      if (q_err.squaredNorm() > JS_active_goal_.getGoal()->ee_error_th) {
+        result_.error_code = result_.GOAL_TOLERANCE_VIOLATED;
+        JS_active_goal_.setCanceled(result_);
+        JS_has_active_goal_ = false;
+      } else {
+        result_.error_code = result_.SUCCESSFUL;
+        JS_active_goal_.setSucceeded(result_);
+        JS_has_active_goal_ = false;
+      }
+    }
+  }
 }
 
 void JointPosition::callbackJointSetpoint(
@@ -491,5 +645,5 @@ void JointPosition::callbackJointSetpoint(
   
   current_traj_.points.push_back(tmp_point);
   
-  //has_active_goal_ = true;
-}
+  traj_length = current_traj_.points.size();
+  }

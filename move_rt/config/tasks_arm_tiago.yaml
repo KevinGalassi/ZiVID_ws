@@ -1,0 +1,31 @@
+#TasksHierarchy: [RobotSafetyStop, JointLimiter, EePosition, ElbowPosition, dqMinimizer]
+TasksHierarchy: [RobotSafetyStop, JointLimiter, JointPosition, EePosition, dqMinimizer] 
+#TasksHierarchy: [JointPosition, SelfCollisionAvoidance]
+#TasksHierarchy: [JointLimiter, EePosition, dqMinimizer ObstacleAvoidance JointGroupPos ElbowPosition] [0.1, 0.1, 0.14, 0.14, 0.14, 0.14, 0.14, 0.14, 0.1, 0.1, 0.1, 0.1, 0.1
+
+
+controller_topic: arm_velocity_controller
+joint_state_topic: joint_states
+
+constraints:
+  stopped_velocity_tolerance: 0.1
+
+n: 7
+dqmax: [1, 1, 1, 1, 1, 1, 1]
+dqmin: [-1, -1, -1, -1, -1, -1, -1]
+cycleHz: 25
+eta:  0.001
+ordered_joints: [arm_1_joint, arm_2_joint, arm_3_joint, arm_4_joint, arm_5_joint, arm_6_joint, arm_7_joint]
+
+dqMinimizer: {m: 7, K: [1, 1, 1, 1, 1, 1 1]}
+JointLimiter: {m: 14, xm: [2.6, 0.0, 0.94, -3.42, 3.42, -3.38, 2.21, 0.24, 1.94, -1.94, 1.42, -1.42, 1.94, -1.94], b: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], K:  [0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05]}
+EePosition: {base_link: base_link, ee_link: gripper_grasping_frame, group: arm, m: 6, K: [1, 1, 1, 0.5, 0.5, 0.5]}
+JointPosition: {m: 7, K: [5, 5, 5, 5, 5, 5]}
+singularityavoidance: {m: 1, xm: [0.1], b: [0.2], K: [1]}
+ObstacleAvoidance: {m: 13, xm: [0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.1, 0.1, 0.1], b: [0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02], K: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], group: arm}
+SelfCollisionAvoidance: {m: 12, xm: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.05, 0.05, 0.05, 0.05], b: [0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.01, 0.01, 0.01, 0.01, 0.01], K: [0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05], group: arm}
+RobotSafetyStop: {m: 7, K: [0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05]}
+JointGroupPos: {m: 7, K: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2], safejointpose: [0.2004, -1.3243, -0.1873, 1.7910, -1.7009, 1.2264, 0.07996]}
+ElbowPosition: {base_link: arm_1_link, ee_link: arm_4_link, group: arm, m: 1, K: [0.2]}
+
+

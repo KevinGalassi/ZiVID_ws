@@ -3,7 +3,7 @@
     <arg name="limited" default="false"/>
     <arg name="paused" default="true"/>
     <arg name="gui" default="true"/>
-    <arg name="debug" default="true"/>
+    <arg name="debug" default="false"/>
     
     <arg name="arm_z" default="0.6"/>
  
@@ -41,6 +41,9 @@
     <node unless="$(arg debug)" pkg="move_rt" type="move_rt_node" name="move_rt" launch-prefix="xterm -e gdb -ex=run --args"/>
     <node if="$(arg debug)" pkg="move_rt" type="move_rt_node" name="move_rt" launch-prefix="xterm -e gdb --args"/>
 
+<!--     <node unless="$(arg debug)" pkg="move_rt" type="joint_traj_action_client" name="joint_traj_action_client" launch-prefix="xterm -e gdb -ex=run - -args"/> -->
+    <node pkg="move_rt" type="joint_traj_action_client" name="joint_traj_action_client" launch-prefix="xterm -e gdb --args"/>
+    
     <group if="$(arg rviz)">
         <arg name="rvizconfig" default="$(find move_rt)/config/move_rt.rviz" />
         <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true"/>

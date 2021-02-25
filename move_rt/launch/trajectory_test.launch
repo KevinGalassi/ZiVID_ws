@@ -3,7 +3,7 @@
     
     <rosparam file="$(find move_rt)/traj/waypoints_test.yaml" command="load"/>    
 
-    <node pkg="move_rt" type="trajectory_node" name="trajectory_node" launch-prefix="xterm -e gdb --args" args="traj_test"/>
+<!--     <node pkg="move_rt" type="trajectory_node" name="trajectory_node" launch-prefix="xterm -e gdb - -args" args="traj_test"/> -->
 
     
 </launch>

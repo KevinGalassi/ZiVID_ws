@@ -83,3 +83,34 @@ traj_test_2: [
     orient_w: 0.1
     }
 ]
+
+joint_traj_test: [ 
+    {
+    time: 5.0, 
+    joint_1: 0.0,
+    joint_2: 0.0,
+    joint_3: 0.0,
+    joint_4: 0.0,
+    joint_5: 0.0,
+    joint_6: 0.0   
+    },
+    {
+    time: 2.0, 
+    joint_1: 0.0,
+    joint_2: 0.0,
+    joint_3: 0.0,
+    joint_4: 1.57,
+    joint_5: 0.0,
+    joint_6: 0.0
+    }, 
+    {
+    time: 2.0, 
+    joint_1: 0.0,
+    joint_2: 0.0,
+    joint_3: 1.57,
+    joint_4: 1.57,
+    joint_5: 0.0,
+    joint_6: 0.0
+    }
+]
+

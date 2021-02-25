@@ -2,7 +2,7 @@
 #TasksHierarchy: [JointPosition]
 TasksHierarchy: [EmergencyStop, JointLimiter, JointPosition, EePosition, dqMinimizer]
 
-controller_topic: joint_group_vel_controller
+controller_topic: arm_velocity_controller
 joint_state_topic: joint_states
 
 constraints:

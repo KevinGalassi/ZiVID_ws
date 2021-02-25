@@ -34,7 +34,7 @@ class MainArmWaypoint(object):
 
    
       print('Left Arm Camera Server Action Client: Waiting')
-      self.left_arm_client = actionlib.SimpleActionClient('/left_arm/CameraActionServer', cameraAquisitionAction)
+      self.left_arm_client = actionlib.SimpleActionClient('/{}CameraActionServer'.format(self.arm), cameraAquisitionAction)
       self.left_arm_client.wait_for_server()
       print('Left Arm Camera Server Action Client: OK\n')
 

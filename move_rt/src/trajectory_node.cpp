@@ -44,9 +44,9 @@ int main(int argc, char **argv) {
 
   ros::Duration(1).sleep();
 
-  ros::ServiceClient Emergency_client = nh.serviceClient<move_rt::TaskParamUpdate>("EmergencyStop_setEnable");
+  ros::ServiceClient Emergency_client = nh.serviceClient<move_rt::TaskParamUpdate>("EmergencyStop/setEnable");
   
-  ros::ServiceClient EePosition_client = nh.serviceClient<move_rt::TaskParamUpdate>("EePosition_setEnable");
+  ros::ServiceClient EePosition_client = nh.serviceClient<move_rt::TaskParamUpdate>("EePosition/setEnable");
   
   move_rt::TaskParamUpdate srv_msg;
   srv_msg.request.data.clear();

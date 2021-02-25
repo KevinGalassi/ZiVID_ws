@@ -264,8 +264,10 @@ add_dependencies(trajectory_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 target_link_libraries(trajectory_node ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GSTREAMER_LIBRARIES})
 
 add_executable(ee_traj_action_client src/ee_traj_action_client.cpp)
-add_dependencies(ee_traj_action_client ${${PROJECT_NAME}_EXPORTED_TARGETS})
 target_link_libraries(ee_traj_action_client ${catkin_LIBRARIES})
+
+add_executable(joint_traj_action_client src/joint_traj_action_client.cpp)
+target_link_libraries(joint_traj_action_client ${catkin_LIBRARIES})
 
 add_executable(positioninterface src/positioninterface.cpp)
 target_link_libraries(positioninterface ${catkin_LIBRARIES})

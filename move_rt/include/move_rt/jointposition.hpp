@@ -44,10 +44,14 @@ public:
   };
 
 private:
+  int traj_length;
+    
   typedef actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction>
       JTAS;
   typedef JTAS::GoalHandle GoalHandle;
 
+  JTAS action_server_;
+    
   void watchdog(const ros::TimerEvent &e);
 
   void goalCB(GoalHandle gh);
@@ -57,30 +61,44 @@ private:
   void controllerStateCB(
       const control_msgs::JointTrajectoryControllerStateConstPtr &msg);
 
-  sensor_msgs::JointState &joint_state_;
-
-  bool position_initialized;
-
+  bool has_active_goal_;
+  GoalHandle active_goal_;
+  trajectory_msgs::JointTrajectory current_traj_;
+  
   int trajectory_index;
 
-  JTAS action_server_;
   ros::Publisher pub_controller_command_;
   ros::Subscriber sub_controller_state_;
   ros::Timer watchdog_timer_;
 
   ros::Time trajectory_start;
 
-  bool has_active_goal_;
-  GoalHandle active_goal_;
-  trajectory_msgs::JointTrajectory current_traj_;
-
   std::vector<std::string> joint_names_;
   std::map<std::string, double> goal_constraints_;
   std::map<std::string, double> trajectory_constraints_;
   double goal_time_constraint_;
   double stopped_velocity_tolerance_;
+  
+  /**
+   * Joint Setpoint Action Server
+   */
+  move_rt::ExecutingTrajectoryFeedback feedback_;
+  move_rt::ExecutingTrajectoryResult result_;
+  typedef actionlib::ActionServer<move_rt::ExecutingTrajectoryAction> JSAS;
+  typedef JSAS::GoalHandle JS_GoalHandle;
 
-  Eigen::Matrix<long double, Eigen::Dynamic, 1> &q;
+  void JS_goalCB(JS_GoalHandle gh);
+  void JS_cancelCB(JS_GoalHandle gh);
+
+  bool JS_has_active_goal_;
+  JSAS JS_action_server_;
+  JS_GoalHandle JS_active_goal_;
+
+  sensor_msgs::JointState &joint_state_;
+
+  bool position_initialized;
+
+  Eigen::Matrix<long double, Eigen::Dynamic, 1> &q, q_err;
 
   control_msgs::JointTrajectoryControllerStateConstPtr last_controller_state_;
 

@@ -30,10 +30,16 @@ class ArmActionServer(object):
         self.arm = robot
         self.active = True
 
-        print('trajectory execution Action Client: Waiting')
+        print('EE trajectory execution Action Client: Waiting')
         self.move_client = actionlib.SimpleActionClient('{}ee_execute_trajectory'.format(self.arm), ExecutingTrajectoryAction)
         self.move_client.wait_for_server()
-        print('trajectory execution Action Client: OK\n')
+        print('EE trajectory execution Action Client: OK\n')
+
+        print('Joint trajectory execution Action Client: Waiting')
+        self.joint_client = actionlib.SimpleActionClient('{}simple_joint_trajectory'.format(self.arm), ExecutingTrajectoryAction)
+        self.joint_client.wait_for_server()
+        print('Joint rajectory execution Action Client: OK\n')
+
 
         print('end-effector enable service: Waiting')
         rospy.wait_for_service('{}EePosition/setEnable'.format(self.arm))
@@ -82,6 +88,9 @@ class ArmActionServer(object):
         self.moveClientResult = ExecutingTrajectoryResult()
         self.joint_goal = Float64MultiArray()
         self.traj_list = [{'orient_w': -0.123, 'orient_x': 0.7, 'orient_y': 0.122, 'orient_z': 0.69, 'pos_x':  0.23347, 'pos_y': -0.35757, 'pos_z': 0.41, 'time': 3.0}]
+
+        self.joint_list = [{'joint_1': -1.34, 'joint_2': -1.15, 'joint_3': -1.75, 'joint_4':-1.69, 'joint_5':  1.57, 'joint_6': -0.6, 'time': 2.0}]
+
         self.pause_timeout = 0.5
 
 
@@ -344,9 +353,21 @@ class ArmActionServer(object):
             self.eeEnable([0])
             self.JointEnable([1])
             self.emergencyEnable([0])
+
+            self.moveClientGoal.trajectory_name = '/{}Ascending'.format(self.arm)
+            rospy.set_param(self.moveClientGoal.trajectory_name, self.joint_list)
+
+            print('Sending Pre-Homing')
+            self.joint_client.send_goal(self.moveClientGoal)
+            result_ok = self.joint_client.wait_for_result()
+
+
+            '''
+            self.joint_list
             self.joint_goal.data = [-1.57, -0.785, -1.60, -2.16, 1.57, 0.0, 2.0]
             self.joint_pub.publish(self.joint_goal)
             time.sleep(4)
+            '''
             self.JointEnable([0])
             self.emergencyEnable([1])
 

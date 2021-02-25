@@ -1,0 +1,26 @@
+#TasksHierarchy: [JointLimiter, singularityavoidance, EePosition, dqMinimizer] 
+TasksHierarchy: [JointLimiter, EePosition, dqMinimizer] 
+#TasksHierarchy: [JointPosition]
+
+controller_topic: arm_velocity_controller
+joint_state_topic: /joint_states
+
+constraints:
+  stopped_velocity_tolerance: 0.1
+
+n: 6
+dqmax: [10, 10, 10, 10, 10, 10]
+dqmin: [-10, -10, -10, -10, -10, -10]
+qmax: [3.14, 3.14, 3.14, 3.14, 3.14, 3.14]
+qmin: [-3.14, -3.14, -3.14, -3.14, -3.14, -3.14]
+cycleHz: 25
+eta:  0.001
+ordered_joints: [ur10_shoulder_pan_joint, ur10_shoulder_lift_joint, ur10_elbow_joint, ur10_wrist_1_joint, ur10_wrist_2_joint, ur10_wrist_3_joint]
+
+  
+dqMinimizer: {m: 6, K: [1, 1, 1, 1, 1, 1]}
+JointLimiter: {m: 12, xm: [-6, 6, -6, 6, -6, 6, -6, 6, -6, 6, -6, 6], b: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], K: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]}
+EePosition: {base_link: ur10_base_link, ee_link: ur10_ee_link, group: manipulator, m: 6, K: [2, 2, 2, 2, 2, 2]}
+JointPosition: {m: 6, K: [5, 5, 5, 5, 5, 5]}
+singularityavoidance: {m: 1, xm: [0.1], b: [0.2], K: [1]}
+ObstacleAvoidance: {m: 1, xm: [0.01], b: [0.02], K: [0.2]}
