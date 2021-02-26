@@ -21,6 +21,7 @@
 
 
 #include <schunk_pg70/set_pvac.h>
+#include <schunk_pg70/stop.h>
 
 
 class pg70ActionServer
@@ -83,9 +84,14 @@ protected:
    void execute_cb(const schunk_pg70::GraspGoalConstPtr& goal);
    void getPeriodicPositionUpdate(serial::Serial *port, float update_period);
    void joint_callback(const sensor_msgs::JointState &msg);
+   
    ros::Subscriber  joint_sub_;
-   ros::ServiceClient set_pvac;
+   ros::ServiceClient set_pvac_;
+   ros::ServiceClient stop_client_;
+
+
    schunk_pg70::set_pvac new_command_;
+   schunk_pg70::stop stop_;
 
 
 };

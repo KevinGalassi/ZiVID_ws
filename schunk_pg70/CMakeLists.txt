@@ -54,7 +54,7 @@ generate_messages(DEPENDENCIES
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES
+  LIBRARIES 
   DEPENDS roscpp serial tf
   CATKIN_DEPENDS message_runtime actionlib_msgs
   )
@@ -62,10 +62,9 @@ catkin_package(
 
 include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
-
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS} schunk_pg70_gencpp)
-target_link_libraries(${PROJECT_NAME} ${ROS_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${ROS_LIBRARIES} ${catkin_LIBRARIES} )
 
 add_executable(pg70_control_position src/pg70_control_position.cpp)
 target_link_libraries(pg70_control_position ${catkin_LIBRARIES})

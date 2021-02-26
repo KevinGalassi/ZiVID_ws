@@ -38,10 +38,14 @@ pg70ActionServer::pg70ActionServer(std::string name) :
    */
 
    ROS_INFO("Set pvac service Connection: Waiting");  
-   set_pvac = nh_.serviceClient<schunk_pg70::set_pvac>("/schunk_pg70/set_pvac");
-   set_pvac.waitForExistence();
+   set_pvac_ = nh_.serviceClient<schunk_pg70::set_pvac>("/schunk_pg70/set_pvac");
+   set_pvac_.waitForExistence();
    ROS_INFO("Set pvac service Connection: OK");
 
+   ROS_INFO("Stop service Connection: Waiting");  
+   stop_client_ = nh_.serviceClient<schunk_pg70::stop>("/schunk_pg70/stop");
+   stop_client_.waitForExistence();
+   ROS_INFO("Stop service Connection: OK");
 
    pg70_as_.start();
    ROS_INFO("Gripper Action Client: OK");
@@ -260,8 +264,6 @@ uint8_t pg70ActionServer::getError(serial::Serial *port)
 }
 
 
-
-
 void pg70ActionServer::execute_cb(const schunk_pg70::GraspGoalConstPtr& goal)
 {
    bool success;
@@ -272,7 +274,7 @@ void pg70ActionServer::execute_cb(const schunk_pg70::GraspGoalConstPtr& goal)
    new_command_.request.goal_acceleration = goal->acceleration;
    new_command_.request.goal_current = goal->current;
 
-   set_pvac.call(new_command_);
+   set_pvac_.call(new_command_);
 
    if(new_command_.response.goal_accepted = false)
    {   
@@ -286,7 +288,8 @@ void pg70ActionServer::execute_cb(const schunk_pg70::GraspGoalConstPtr& goal)
    }
 
    std::cout << goal->max_time << "\n";
-   ros::Time start_time = ros::Time::now();
+   float start_time = ros::Time::now().toSec();
+
    // Controllo che sia stato compeltato
    std::cout << start_time << "\n";
 
@@ -294,9 +297,9 @@ void pg70ActionServer::execute_cb(const schunk_pg70::GraspGoalConstPtr& goal)
 
    while(ros::ok())
    {
-      std::cout << (ros::Time::now() - start_time).toSec() << "\n";
+      std::cout << (ros::Time::now().toSec() - start_time) << "\n";
 
-      if (goal->max_time < ((ros::Time::now() - start_time).toSec()))
+      if (ros::Time::now().toSec() - start_time > goal->max_time)
       {
          ROS_WARN("Timer expired");
          pg70_as_result_.success = false;
@@ -312,6 +315,7 @@ void pg70ActionServer::execute_cb(const schunk_pg70::GraspGoalConstPtr& goal)
       }
    }
 
+   stop_client_.call(stop_);
 
    pg70_as_.setSucceeded(pg70_as_result_);
 
@@ -403,11 +407,14 @@ void pg70ActionServer::execute_cb(const schunk_pg70::GraspGoalConstPtr& goal)
          break;
       }
    }
-   */
 
-   pg70_as_.setSucceeded(pg70_as_result_);
+      pg70_as_.setSucceeded(pg70_as_result_);
 
    ROS_INFO("Grasp completed with output: %d ", success);
+
+   */
+
+
    return;
 }
 
