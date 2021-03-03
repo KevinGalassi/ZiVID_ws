@@ -39,6 +39,7 @@ protected:
    ros::NodeHandle nh_;
 //   ros::Rate loop_rate_(60);
 
+
    int gripper_id_;
    std::string port_name_;
    int baudrate_;

@@ -34,8 +34,9 @@ pg70ActionServer::pg70ActionServer(std::string name) :
    else
       ROS_ERROR_STREAM("ActionServer: Serial port " << port_name_ << " not opened");
 
-   joint_sub_ = nh_.subscribe("schunk_pg70/joint_states", 1, &pg70ActionServer::joint_callback, this);
    */
+
+   joint_sub_ = nh_.subscribe("/schunk_pg70/joint_states", 1, &pg70ActionServer::joint_callback, this);
 
    ROS_INFO("Set pvac service Connection: Waiting");  
    set_pvac_ = nh_.serviceClient<schunk_pg70::set_pvac>("/schunk_pg70/set_pvac");
@@ -69,8 +70,6 @@ void pg70ActionServer::joint_callback(const sensor_msgs::JointState &msg)
    act_position_  = msg.position[0]*URDF_SCALE_FACTOR;
    act_velocity_  = msg.velocity[0]*URDF_SCALE_FACTOR;
    act_current_   = msg.effort[0]*URDF_SCALE_FACTOR;
-
-
 
 	return;
 }
@@ -287,7 +286,7 @@ void pg70ActionServer::execute_cb(const schunk_pg70::GraspGoalConstPtr& goal)
       return;
    }
 
-   std::cout << goal->max_time << "\n";
+   std::cout <<"max time " << goal->max_time << "\n";
    float start_time = ros::Time::now().toSec();
 
    // Controllo che sia stato compeltato
@@ -295,9 +294,10 @@ void pg70ActionServer::execute_cb(const schunk_pg70::GraspGoalConstPtr& goal)
 
   // ros::Duration counter = start_time;
 
+   ros::Rate r(100);
+
    while(ros::ok())
    {
-      std::cout << (ros::Time::now().toSec() - start_time) << "\n";
 
       if (ros::Time::now().toSec() - start_time > goal->max_time)
       {
@@ -305,14 +305,15 @@ void pg70ActionServer::execute_cb(const schunk_pg70::GraspGoalConstPtr& goal)
          pg70_as_result_.success = false;
          break;
       }   
-         
-      
-      if( (act_position_ - goal->position) < 1) 
+      ros::spinOnce();
+      if( ((act_position_ - goal->position) < 1) && ((act_position_ - goal->position) > -1) )
       {
          ROS_INFO("Goal reached succesfully");
          pg70_as_result_.success = success;
          break;
       }
+
+      r.sleep();
    }
 
    stop_client_.call(stop_);

@@ -176,7 +176,7 @@ class CameraActionServer(object):
          self.clearTraj([1])
          
          counter = 0
-
+         time.sleep(0.5)
          while(counter < 3) : 
             self.camera_res = self.camera_client()
             
