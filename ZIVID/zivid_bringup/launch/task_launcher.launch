@@ -12,8 +12,8 @@
     <arg name="left_z"     default="0.001"/>     
     <arg name="left_Y"     default="0.0"/>  
 
-    <arg name="grasp"   default="false"/>
-    <arg name="camera" default="true"/>
+    <arg name="grasp"   default="true"/>
+    <arg name="camera" default="false"/>
 
 
     <group if="$(arg grasp)" >

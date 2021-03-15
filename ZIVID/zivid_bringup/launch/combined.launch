@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <launch>
 
-   <arg name="left_active" value="false"/>
-   <arg name="right_active" value="true"/>
+   <arg name="left_active" value="true"/>
+   <arg name="right_active" value="false"/>
 
    <arg name="limited" default="true"/>
    <arg name="paused" default="true"/>

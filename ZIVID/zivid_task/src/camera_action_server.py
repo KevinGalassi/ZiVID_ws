@@ -18,7 +18,7 @@ from geometry_msgs.msg import Pose, PoseArray
 
 import moveit_commander
 import moveit_msgs.msg
-
+from tqdm import tqdm
 
 class CameraActionServer(object):
    # create messages that are used to publish feedback/result
@@ -144,49 +144,52 @@ class CameraActionServer(object):
       print(result_ok)
 
 
-
-      for i in range( len(goal.pose_sequence.poses) ):
-         
-         print('Move to pose: ', i)
-         print(goal.pose_sequence.poses[i])
-
-         self.target_pose = copy.deepcopy(goal.pose_sequence.poses[i])
-
-         self.traj_list[0]['orient_w'] = self.target_pose.orientation.w
-         self.traj_list[0]['orient_x'] = self.target_pose.orientation.x
-         self.traj_list[0]['orient_y'] = self.target_pose.orientation.y
-         self.traj_list[0]['orient_z'] = self.target_pose.orientation.z
-         self.traj_list[0]['pos_x'] = self.target_pose.position.x
-         self.traj_list[0]['pos_y'] = self.target_pose.position.y
-         self.traj_list[0]['pos_z'] = self.target_pose.position.z
-         self.traj_list[0]['time'] = 1.0
-
-         self.eeEnable([1])
-         self.emergencyEnable([0])
-
-         self.moveClientGoal.trajectory_name = '/{}move_to_target'.format(self.arm)
-         rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
-         
-         self.move_client.send_goal(self.moveClientGoal)
-         result_ok = self.move_client.wait_for_result()
-         print(result_ok)
-
-         self.emergencyEnable([1])
-         self.eeEnable([0])
-         self.clearTraj([1])
-         
-         counter = 0
-         time.sleep(0.5)
-         while(counter < 3) : 
-            self.camera_res = self.camera_client()
+      with tqdm(total=len(goal.pose_sequence.poses)) as pbar:
+         for i in range( len(goal.pose_sequence.poses) ):
             
-            if (self.camera_res.result.data):
-               break
+            #print('Move to pose: ', i)
+            #print(goal.pose_sequence.poses[i])
 
-            counter = counter + 1
+            self.target_pose = copy.deepcopy(goal.pose_sequence.poses[i])
 
-         if counter >= 3 :
-            print('Camera Not WORKING')
+            self.traj_list[0]['orient_w'] = self.target_pose.orientation.w
+            self.traj_list[0]['orient_x'] = self.target_pose.orientation.x
+            self.traj_list[0]['orient_y'] = self.target_pose.orientation.y
+            self.traj_list[0]['orient_z'] = self.target_pose.orientation.z
+            self.traj_list[0]['pos_x'] = self.target_pose.position.x
+            self.traj_list[0]['pos_y'] = self.target_pose.position.y
+            self.traj_list[0]['pos_z'] = self.target_pose.position.z
+            self.traj_list[0]['time'] = 1.0
+
+            self.eeEnable([1])
+            self.emergencyEnable([0])
+
+            self.moveClientGoal.trajectory_name = '/{}move_to_target'.format(self.arm)
+            rospy.set_param(self.moveClientGoal.trajectory_name, self.traj_list)
+            
+            self.move_client.send_goal(self.moveClientGoal)
+            result_ok = self.move_client.wait_for_result()
+            #print(result_ok)
+
+            self.emergencyEnable([1])
+            self.eeEnable([0])
+            self.clearTraj([1])
+            
+            counter = 0
+            time.sleep(0.5)
+            while(counter < 3) : 
+               self.camera_res = self.camera_client()
+               
+               if (self.camera_res.result.data):
+                  break
+
+               counter = counter + 1
+
+            if counter >= 3 :
+               print('Camera Not WORKING')
+
+            
+            pbar.update()
          
                
 

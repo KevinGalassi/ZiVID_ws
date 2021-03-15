@@ -5,6 +5,7 @@ import time
 import actionlib
 import copy
 import tf
+import os
 import numpy as np
 from zivid_msgs.msg import moveWireAction, moveWireResult, moveWireFeedback
 from move_rt.msg import ExecutingTrajectoryAction, ExecutingTrajectoryGoal, ExecutingTrajectoryResult
@@ -12,6 +13,7 @@ from move_rt.srv import *
 from std_msgs.msg import Float64MultiArray, Bool
 from schunk_pg70.srv import set_pvac
 from geometry_msgs.msg import Pose
+from sensor_msgs.msg import JointState
 import moveit_commander
 import moveit_msgs.msg
 
@@ -23,6 +25,11 @@ class ArmActionServer(object):
     moveClientGoal = ExecutingTrajectoryGoal()
 
     def __init__(self, name, robot = ''):
+        self.transiction_counter = 1
+        self.grasp_fails_txt = "grasp_fails.txt"
+        if os.path.exists(self.grasp_fails_txt):
+            os.remove(self.grasp_fails_txt)
+
         #definition of action server, services and action clients
         self.ArmActionServer_as_name = robot[:-1] + name
         self.ArmActionServer_as = actionlib.SimpleActionServer(self.ArmActionServer_as_name, moveWireAction, execute_cb=self.execute_cb, auto_start = False)
@@ -76,6 +83,8 @@ class ArmActionServer(object):
 
 
         self.joint_pub = rospy.Publisher('{}joint_setpoint'.format(self.arm),Float64MultiArray, queue_size=10)     
+        self.effort_current_value = 0
+        self.effort_threshold = 0.15
 
 
         self.clearTraj([0])
@@ -89,8 +98,25 @@ class ArmActionServer(object):
         self.joint_goal = Float64MultiArray()
         self.traj_list = [{'orient_w': -0.123, 'orient_x': 0.7, 'orient_y': 0.122, 'orient_z': 0.69, 'pos_x':  0.23347, 'pos_y': -0.35757, 'pos_z': 0.41, 'time': 3.0}]
 
-        self.joint_list = [{'joint_1': -1.34, 'joint_2': -1.15, 'joint_3': -1.75, 'joint_4':-1.69, 'joint_5':  1.57, 'joint_6': -0.6, 'time': 2.0}]
+        self.joint_list = [{'joint_1': -1.34, 'joint_2': -1.15, 'joint_3': -1.75, 'joint_4':-1.69, 'joint_5':  1.57, 'joint_6': -0.6, 'time': 2.0}, {'joint_1': -1.34, 'joint_2': -1.15, 'joint_3': -1.75, 'joint_4':-1.69, 'joint_5':  1.57, 'joint_6': -0.6, 'time': 2.0}]
+        
+        self.joint_list[0]['joint_1'] = -1.34
+        self.joint_list[0]['joint_2'] = -1.15
+        self.joint_list[0]['joint_3'] = -1.75
+        self.joint_list[0]['joint_4'] = -1.69
+        self.joint_list[0]['joint_5'] = 1.57
+        self.joint_list[0]['joint_6'] = -0.6
+        self.joint_list[0]['time'] = 1.5
 
+        self.joint_list[1]['joint_1'] = -1.34
+        self.joint_list[1]['joint_2'] = -1.10
+        self.joint_list[1]['joint_3'] = -1.70
+        self.joint_list[1]['joint_4'] = -1.69
+        self.joint_list[1]['joint_5'] = 1.57
+        self.joint_list[1]['joint_6'] = -0.6
+        self.joint_list[1]['time'] = 0.5
+        
+        
         self.pause_timeout = 0.5
 
 
@@ -229,11 +255,11 @@ class ArmActionServer(object):
             self.emergencyEnable([1])
             self.eeEnable([0])
             self.clearTraj([0])   
-            result = self.gripper_client(30, self.gripper_velocity, self.gripper_acceleration, 303)
+            result = self.gripper_client(30, self.gripper_velocity, self.gripper_acceleration, 300)
             time.sleep(3)
 
 
-            # Ascending
+            # Ascendinga
             print('sending Ascending goal to action server')
 
             self.emergencyEnable([0])
@@ -299,13 +325,22 @@ class ArmActionServer(object):
             print('Sending moving goal')
             self.move_client.send_goal(self.moveClientGoal)
             result_ok = self.move_client.wait_for_result()
-            self.clearTraj([0])   
-            
+            self.clearTraj([0])  
+
+            '''
+            # CHECK GRASP SUCCESS
+            gripper_status = rospy.wait_for_message("schunk_pg70/joint_states",JointState)
+            if gripper_status.effort[0] < self.effort_threshold:
+                print("-----------> GRASP FAIL!") 
+                f = open(self.grasp_fails_txt, 'a')
+                f.write(self.transiction_counter)
+                f.close()
+            '''
 
             # Release
 
             print('Gripper Opening')
-            result = self.gripper_client(60, self.gripper_velocity, self.gripper_acceleration, 2000)
+            result = self.gripper_client(60, self.gripper_velocity, self.gripper_acceleration, 1500)
             time.sleep(1.5)
 
             self.traj_list[0]['pos_z'] += 0.015
@@ -319,6 +354,8 @@ class ArmActionServer(object):
             self.clearTraj([0])   
             self.emergencyEnable([1])
             self.eeEnable([0])
+
+            self.transiction_counter += 1
             
 
         if goal.requested_action == 'Homing':
