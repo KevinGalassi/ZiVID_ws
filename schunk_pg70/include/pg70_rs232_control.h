@@ -174,7 +174,7 @@ private:
   
   //Consts
   static constexpr double MIN_GRIPPER_POS_LIMIT = 0;
-  static constexpr double MAX_GRIPPER_POS_LIMIT = 69;
+  static constexpr double MAX_GRIPPER_POS_LIMIT = 66;
   static constexpr double MIN_GRIPPER_VEL_LIMIT = 0;
   static constexpr double MAX_GRIPPER_VEL_LIMIT = 83;
   static constexpr double MIN_GRIPPER_ACC_LIMIT = 0;

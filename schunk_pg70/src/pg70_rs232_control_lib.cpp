@@ -143,12 +143,12 @@ PG70_serial::getError(serial::Serial *port)
       switch (pg70_error_)
       {
         case 0x00: ROS_INFO("PG70: No error detected"); break;
-        case 0xC8: ROS_ERROR("PG70: Error: 0xC8 detected: Wrong ramp type"); break;
-        case 0xD2: ROS_ERROR("PG70: Error: 0xD2 detected: Config memory"); break;
-        case 0xD3: ROS_ERROR("PG70: Error: 0xD3 detected: Program memory"); break;
-        case 0xD4: ROS_ERROR("PG70: Error: 0xD4 detected: Invalid phrase"); break;
+        case 0xC8: ROS_ERROR("PG70: Error: 0xC8 detected: Wrong ramp type");   break;
+        case 0xD2: ROS_ERROR("PG70: Error: 0xD2 detected: Config memory");    break;
+        case 0xD3: ROS_ERROR("PG70: Error: 0xD3 detected: Program memory");   break;
+        case 0xD4: ROS_ERROR("PG70: Error: 0xD4 detected: Invalid phrase");   break;
         case 0xD5: ROS_ERROR("PG70: Error: 0xD5 detected: Soft low"); break;
-        case 0xD6: ROS_ERROR("PG70: Error: 0xD6 detected: Soft high"); break;
+        case 0xD6: ROS_ERROR("PG70: Error: 0xD6 detected: Soft high");            break;
         case 0xD7: ROS_ERROR("PG70: Error: 0xD7 detected: Pressure"); break;
         case 0xD8: ROS_ERROR("PG70: Error: 0xD8 detected: Service required"); break;
         case 0xD9: ROS_ERROR("PG70: Error: 0xD9 detected: Emergency stop"); break;
@@ -172,6 +172,12 @@ PG70_serial::getError(serial::Serial *port)
         case 0x76: ROS_ERROR("PG70: Error: 0x76 detected: Cable break"); break;
         case 0x78: ROS_ERROR("PG70: Error: 0x78 detected: Motor temp"); break;
       }
+
+        //            acknowledgeError(com_port_);
+        //pg70_error_ = 0x00;
+
+      
+
       //Re-start periodic position reading 
       getPeriodicPositionUpdate(com_port_, TF_UPDATE_PERIOD);
       return((uint8_t)pg70_error_);
